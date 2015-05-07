@@ -38,7 +38,10 @@ while **guiding** the users in a **responsive** and **intelligent** manner to wr
 
 
 ##### siddhi - https://github.com/wso2/siddhi
-##### carbon-commons - https://github.com/wso2/carbon-commons
 ##### carbon-event-processing - https://github.com/wso2/carbon-event-processing 
     
     
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/TharinduMunasinge/cep-siddhi_editor/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
