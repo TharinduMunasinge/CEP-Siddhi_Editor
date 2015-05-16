@@ -34,11 +34,31 @@
     var editor = ace.edit("editor");
     editor.session.setMode("ace/mode/siddhi");
     editor.setTheme("ace/theme/tomorrow");
+
+
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true,
         enableLiveAutocompletion: true
     });
+
+    editor.getSession().setUseWrapMode(true);
+    editor.getSession().setTabSize(4);
+    editor.getSession().setUseSoftTabs(true);
+
+    editor.setShowFoldWidgets(true);
+    editor.setBehavioursEnabled(true);
+    editor.setHighlightSelectedWord(true);
+    editor.setHighlightActiveLine(true);
+    editor.setDisplayIndentGuides(true);
+    editor.setShowPrintMargin(false);
+
+    editor.setValue("This is the just text\nabcfaf");
+    console.log(editor.getValue())
+    document.getElementById('editor').style.fontSize='18px';
+
+
+
 
     editor.commands.on("afterExec", function(e){
         if (e.command.name == "insertstring" && /^[\@.]$/.test(e.args)) {
@@ -77,6 +97,19 @@
     }
 
     langTools.addCompleter(rhymeCompleter);
+
+
+    editor.getSession().on('change', function(e) {
+        console.log("event",e)
+        console.log("curent line and column",editor.selection.getCursor())
+
+        console.log("Number of lines",editor.session.getLength());
+
+
+
+    });
+
+
 
 
 </script>
