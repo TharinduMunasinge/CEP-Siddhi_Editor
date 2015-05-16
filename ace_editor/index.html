@@ -34,6 +34,11 @@
     var editor = ace.edit("editor");
     editor.session.setMode("ace/mode/siddhi");
     editor.setTheme("ace/theme/tomorrow");
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
 
 
 </script>
