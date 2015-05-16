@@ -7,8 +7,7 @@ define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/lib/
     var SiddhiHighlightRules = function() {
 
         var keywords = (
-            "STREAM|DEFINE|TABLE|FROM|PARTITION|WINDOW|SELECT|GROUP|BY|HAVING|INSERT|DELETE|UPDATE|RETURN|EVENTS|INTO|OUTPUT|EXPIRED|CURRENT|SNAPSHOT|FOR|RAW|OF|AS|OR|AND|ON|IS|NOT|WITHIN|WITH|BEGIN|END|NULL|EVERY|LAST|ALL|FIRST|JOIN|INNER|OUTER|RIGHT|LEFT|FULL|UNIDIRECTIONAL|YEARS|MONTHS|WEEKS|DAYS|HOURS|MINUTES|SECONDS|MILLISECONDS"
-
+            "STREAM|DEFINE|TABLE|FROM|PARTITION|WINDOW|SELECT|GROUP|BY|HAVING|INSERT|DELETE|UPDATE|RETURN|EVENTS|INTO|OUTPUT|EXPIRED|CURRENT|SNAPSHOT|FOR|RAW|OF|AS|OR|AND|ON|IS|NOT|WITHIN|WITH|BEGIN|END|NULL|EVERY|LAST|ALL|FIRST|JOIN|INNER|OUTER|RIGHT|LEFT|FULL|UNIDIRECTIONAL|YEARS|MONTHS|WEEKS|DAYS|HOURS|MINUTES|SECONDS|MILLISECONDS|"
         );
 
         var builtinConstants = (
@@ -22,7 +21,9 @@ define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/lib/
         var keywordMapper = this.createKeywordMapper({
             "support.function": builtinFunctions,
             "keyword": keywords,
-            "constant.language": builtinConstants
+            "constant.language": builtinConstants,
+            "support.type":("int|string|bool|float|double|object"),
+            "constant.language.boolean": "true|false"
         }, "identifier", true);
 
         this.$rules = {
@@ -47,18 +48,24 @@ define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/lib/
                 regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
             }, {
                 token : "keyword.operator",
-                regex : "\\+|\\-|\\/|\\/\\/|%|<@>|@>|<@|&|\\^|~|<|>|<=|=>|==|!=|<>|="
-            }, {
-                token : "paren.lparen",
-                regex : "[\\(]"
-            }, {
-                token : "paren.rparen",
-                regex : "[\\)]"
-            }, {
-                token : "text",
-                regex : "\\s+"
-            } ]
+                regex : "\\+|\\-|\\/|\\/\\/|%|<@>|@>|<@|&|\\^|~|<|>|<=|=>|==|!=|<>|=|->|@|#|\\?|\\[|\\]|\\(|\\)|\\?|:|;|,|\\."
+
+            },
+                {
+                    token : "paren.lparen",
+                    regex : "[\\(]"
+                },
+
+                {
+                    token : "paren.rparen",
+                    regex : "[\\)]"
+                }, {
+                    token : "text",
+                    regex : "\\s+"
+                } ]
         };
+
+        //        var operators=("[|*|+|%|<|>|!|=|]");
         this.normalizeRules();
     };
 
