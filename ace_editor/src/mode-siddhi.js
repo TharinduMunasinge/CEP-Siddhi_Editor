@@ -7,8 +7,8 @@ define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/lib/
     var SiddhiHighlightRules = function() {
 
         var keywords = (
-        "select|insert|update|delete|from|where|and|or|group|by|order|limit|offset|having|as|case|" +
-        "when|else|end|type|left|right|join|on|outer|desc|asc|union"
+            "STREAM|DEFINE|TABLE|FROM|PARTITION|WINDOW|SELECT|GROUP|BY|HAVING|INSERT|DELETE|UPDATE|RETURN|EVENTS|INTO|OUTPUT|EXPIRED|CURRENT|SNAPSHOT|FOR|RAW|OF|AS|OR|AND|ON|IS|NOT|WITHIN|WITH|BEGIN|END|NULL|EVERY|LAST|ALL|FIRST|JOIN|INNER|OUTER|RIGHT|LEFT|FULL|UNIDIRECTIONAL|YEARS|MONTHS|WEEKS|DAYS|HOURS|MINUTES|SECONDS|MILLISECONDS"
+
         );
 
         var builtinConstants = (
@@ -16,7 +16,7 @@ define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/lib/
         );
 
         var builtinFunctions = (
-            "count|min|max|avg|sum|rank|now|coalesce"
+            "count|min|max|avg|sum"
         );
 
         var keywordMapper = this.createKeywordMapper({
