@@ -1,0 +1,69 @@
+
+        <html>
+        <head>
+
+            <script type="text/javascript" src="../eventprocessor/js/execution_plans.js"></script>
+            <script type="text/javascript"
+                    src="../eventprocessor/js/create_execution_plan_helper.js"></script>
+            <script type="text/javascript"
+                    src="../eventprocessor/js/eventprocessor_constants.js"></script>
+            <script type="text/javascript" src="../ajax/js/prototype.js"></script>
+
+
+            <link rel="stylesheet" href="../eventprocessor/css/codemirror.css"/>
+            <link rel="stylesheet" href="../eventprocessor/css/show-hint.css">
+            <link rel="stylesheet" href="../eventprocessor/css/event-processor.css"/>
+            <script src="../eventprocessor/js/codemirror.js"></script>
+            <script type="text/javascript" src="../eventprocessor/js/show-hint.js"></script>
+            <script type="text/javascript" src="../eventprocessor/js/annotation-hint.js"></script>
+            <script type="text/javascript" src="js/any-word-hint.js"></script>
+            <script type="text/javascript" src="../eventprocessor/js/sql-hint.js"></script>
+            <script src="../eventprocessor/js/sql.js"></script>
+
+            <style>
+                .CodeMirror {
+                    border-top: 1px solid #cccccc;
+                    border-bottom: 1px solid black;
+                }
+            </style>
+
+
+            <script>
+                var init = function () {
+
+                    var mime = MIME_TYPE_SIDDHI_QL;
+
+                    // get mime type
+                    if (window.location.href.indexOf('mime=') > -1) {
+                        mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
+                    }
+
+                    window.queryEditor = CodeMirror.fromTextArea(document.getElementById('queryExpressions'), {
+                        mode: mime,
+                        indentWithTabs: true,
+                        smartIndent: true,
+                        lineNumbers: true,
+                        matchBrackets: true,
+                        autofocus: true,
+                        extraKeys: {
+                            "Shift-2": function(cm) {
+                                insertStr(cm, cm.getCursor(), '@');
+                                CodeMirror.showHint(cm, getAnnotationHints);
+                            },
+                            "Ctrl-Space": "autocomplete"
+                        }
+                    });
+
+                };
+            </script>
+
+        </head>
+        <body onload="init()">
+<textarea class="queryExpressionsTextArea" style="width:100%; height: 150px"
+              id="queryExpressions"
+              name="queryExpressions" onblur="window.queryEditor.save()">
+</textarea>
+
+<input type="button" class="button"
+               value="validate"     onclick="validateQueries()"/>
+        </body></html>
