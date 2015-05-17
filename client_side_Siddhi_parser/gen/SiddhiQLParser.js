@@ -1,6 +1,6 @@
 // Generated from /Development/Projects/Gsoc/CEP-Siddhi_Editor/client_side_Siddhi_parser/SiddhiQL.g4 by ANTLR 4.5
 // jshint ignore: start
-var antlr4 = require('antlr4/index');
+var antlr4 = require('../antlr4/index');
 var SiddhiQLListener = require('./SiddhiQLListener').SiddhiQLListener;
 var SiddhiQLVisitor = require('./SiddhiQLVisitor').SiddhiQLVisitor;
 

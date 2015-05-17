@@ -74,6 +74,8 @@ ConsoleErrorListener.INSTANCE = new ConsoleErrorListener();
 // </pre>
 //
 ConsoleErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol, line, column, msg, e) {
+    window.editor.session.setAnnotations([{row:line-1 ,column: column, text:
+        msg,type:"error"}]);
     console.error("line " + line + ":" + column + " " + msg);
 };
 
