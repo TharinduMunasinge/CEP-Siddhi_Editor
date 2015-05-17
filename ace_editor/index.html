@@ -18,20 +18,90 @@
         }
     </style>
 </head>
+
+
 <body>
 
 <pre id="editor"></pre>
 
-<!-- load ace -->
 <script src="src/ace.js"></script>
 <!-- load ace language tools -->
 <script src="src/ext-language_tools.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
+
+<script src='../client_side_Siddhi_parser/lib/require.js'></script>
+
+<script>
+
+    var antlr4 = require('../client_side_Siddhi_parser/antlr4/index');
+//
+    var SiddhiQLGrammarLexer=require('../client_side_Siddhi_parser/gen/SiddhiQLLexer');
+    var SiddhiQLGrammarParser=require('../client_side_Siddhi_parser/gen/SiddhiQLParser');
+    var KeyPrinter=require('../client_side_Siddhi_parser/gen/KeyPrinter');
+//
+//    //console.log(antlr4,exports);
+
+</script>
+
+
+<!--<script type="text/javascript">-->
+
+    <!--function init() {-->
+        <!--var evalButton = document.getElementById("eval");-->
+        <!--evalButton.onclick = evalExpression;-->
+    <!--}-->
+
+    <!--function evalExpression() {-->
+        <!--document.getElementById("answer").innerHTML = "";-->
+        <!--var expression = document.getElementById("exp").value;-->
+        <!--if(expression) {-->
+            <!--var  txt=new antlr4.InputStream(expression)-->
+
+            <!--//console.log(txt);-->
+            <!--var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);-->
+            <!--var tokens = new  antlr4.CommonTokenStream(lexer);-->
+            <!--var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);-->
+
+
+<!--//        var nodes = new org.antlr.runtime.tree.CommonTreeNodeStream(parser.parse().getTree());-->
+<!--//        nodes.setTokenStream(tokens);-->
+<!--//        var walker = new ExpWalker(nodes);-->
+<!--//        var value = walker.walk();-->
+
+
+            <!--parser.buildParseTrees = true;-->
+            <!--var tree = parser.execution_plan();-->
+            <!--console.log(KeyPrinter)-->
+
+            <!--var printer = new KeyPrinter.KeyPrinter();-->
+
+            <!--antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);-->
+
+
+            <!--console.log(tree);-->
+            <!--// document.getElementById("answer").innerHTML = expression + " = " + value;-->
+        <!--}-->
+        <!--else {-->
+            <!--document.getElementById("exp").value = "enter an expression here first";-->
+        <!--}-->
+    <!--}-->
+
+<!--</script>-->
+
+
+
+
+
+
+
+
+<!-- load ace -->
+
 <script>
     // trigger extension
     var langTools = ace.require("ace/ext/language_tools");
-    var editor = ace.edit("editor");
+     editor = ace.edit("editor");
     editor.session.setMode("ace/mode/siddhi");
     editor.setTheme("ace/theme/tomorrow");
 
@@ -100,10 +170,37 @@
 
 
     editor.getSession().on('change', function(e) {
-        console.log("event",e)
-        console.log("curent line and column",editor.selection.getCursor())
+//        console.log("event",e)
+//        console.log("curent line and column",editor.selection.getCursor())
+//
+//        console.log("Number of lines",editor.session.getLength());
 
-        console.log("Number of lines",editor.session.getLength());
+
+        var expression=editor.getValue();
+
+        var  txt=new antlr4.InputStream(expression)
+
+        var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);
+        var tokens = new  antlr4.CommonTokenStream(lexer);
+        var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);
+
+
+//        var nodes = new org.antlr.runtime.tree.CommonTreeNodeStream(parser.parse().getTree());
+//        nodes.setTokenStream(tokens);
+//        var walker = new ExpWalker(nodes);
+//        var value = walker.walk();
+
+
+        parser.buildParseTrees = true;
+        var tree = parser.execution_plan();
+        console.log(KeyPrinter)
+
+        var printer = new KeyPrinter.KeyPrinter();
+
+        antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
+
+
+        console.log(tree);
 
 
 
