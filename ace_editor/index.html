@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ACE Autocompletion demo</title>
+    <title>Intelligent Siddhi Editor</title>
     <style type="text/css" media="screen">
         body {
             overflow: hidden;
@@ -43,56 +43,6 @@
 //    //console.log(antlr4,exports);
 
 </script>
-
-
-<!--<script type="text/javascript">-->
-
-    <!--function init() {-->
-        <!--var evalButton = document.getElementById("eval");-->
-        <!--evalButton.onclick = evalExpression;-->
-    <!--}-->
-
-    <!--function evalExpression() {-->
-        <!--document.getElementById("answer").innerHTML = "";-->
-        <!--var expression = document.getElementById("exp").value;-->
-        <!--if(expression) {-->
-            <!--var  txt=new antlr4.InputStream(expression)-->
-
-            <!--//console.log(txt);-->
-            <!--var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);-->
-            <!--var tokens = new  antlr4.CommonTokenStream(lexer);-->
-            <!--var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);-->
-
-
-<!--//        var nodes = new org.antlr.runtime.tree.CommonTreeNodeStream(parser.parse().getTree());-->
-<!--//        nodes.setTokenStream(tokens);-->
-<!--//        var walker = new ExpWalker(nodes);-->
-<!--//        var value = walker.walk();-->
-
-
-            <!--parser.buildParseTrees = true;-->
-            <!--var tree = parser.execution_plan();-->
-            <!--console.log(KeyPrinter)-->
-
-            <!--var printer = new KeyPrinter.KeyPrinter();-->
-
-            <!--antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);-->
-
-
-            <!--console.log(tree);-->
-            <!--// document.getElementById("answer").innerHTML = expression + " = " + value;-->
-        <!--}-->
-        <!--else {-->
-            <!--document.getElementById("exp").value = "enter an expression here first";-->
-        <!--}-->
-    <!--}-->
-
-<!--</script>-->
-
-
-
-
-
 
 
 
@@ -166,14 +116,10 @@
         }
     }
 
-    langTools.addCompleter(rhymeCompleter);
+    //langTools.addCompleter(rhymeCompleter);
 
 
     editor.getSession().on('change', function(e) {
-//        console.log("event",e)
-//        console.log("curent line and column",editor.selection.getCursor())
-//
-//        console.log("Number of lines",editor.session.getLength());
 
 
         var expression=editor.getValue();
@@ -211,6 +157,5 @@
 
 </script>
 
-<!--<script src="./show_own_source.js"></script>-->
 </body>
 </html>
