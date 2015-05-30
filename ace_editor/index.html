@@ -55,6 +55,8 @@
     editor.session.setMode("ace/mode/siddhi");
     editor.setTheme("ace/theme/tomorrow");
 
+    var Range = ace.require("ace/range").Range
+
 
     editor.setOptions({
         enableBasicAutocompletion: true,
@@ -73,8 +75,6 @@
     editor.setDisplayIndentGuides(true);
     editor.setShowPrintMargin(false);
 
-    editor.setValue("This is the just text\nabcfaf");
-    console.log(editor.getValue())
     document.getElementById('editor').style.fontSize='18px';
 
 
@@ -122,6 +122,13 @@
     editor.getSession().on('change', function(e) {
 
 
+        if(window.errormarker) {
+            editor.session.removeMarker(window.errormarker);
+            editor.session.clearAnnotations();
+            window.errormarker=undefined;
+        }
+
+
         var expression=editor.getValue();
 
         var  txt=new antlr4.InputStream(expression)
@@ -130,11 +137,6 @@
         var tokens = new  antlr4.CommonTokenStream(lexer);
         var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);
 
-
-//        var nodes = new org.antlr.runtime.tree.CommonTreeNodeStream(parser.parse().getTree());
-//        nodes.setTokenStream(tokens);
-//        var walker = new ExpWalker(nodes);
-//        var value = walker.walk();
 
 
         parser.buildParseTrees = true;
