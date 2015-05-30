@@ -78,7 +78,7 @@ ConsoleErrorListener.prototype.syntaxError = function(recognizer, offendingSymbo
         msg,type:"error"}]);
     window.errormarker=window.editor.session.addMarker(new Range(line-1,column-1,line-1,column+1),"line","fullLine");
 
-    console.error("line " + line + ":" + column + " " + msg);
+    console.error(" Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
 };
 
 function ProxyErrorListener(delegates) {

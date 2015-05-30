@@ -101,9 +101,6 @@
         {"word":"ti","freq":20,"score":300,"flags":"bc","syllables":"1"},
         {"word":"pea","freq":19,"score":300,"flags":"bc","syllables":"1"}];
 
-
-
-
     var rhymeCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
             if (prefix.length === 0) { callback(null, []); return }
@@ -121,7 +118,7 @@
 
     editor.getSession().on('change', function(e) {
 
-
+        //to remove the existing error markers and validate again
         if(window.errormarker) {
             editor.session.removeMarker(window.errormarker);
             editor.session.clearAnnotations();
@@ -137,19 +134,10 @@
         var tokens = new  antlr4.CommonTokenStream(lexer);
         var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);
 
-
-
         parser.buildParseTrees = true;
-        var tree = parser.execution_plan();
-        console.log(KeyPrinter)
-
+        var tree = parser.parse();
         var printer = new KeyPrinter.KeyPrinter();
-
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
-
-
-        console.log(tree);
-
 
 
     });
