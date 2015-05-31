@@ -40,9 +40,6 @@
     var SiddhiQLGrammarLexer=require('../client_side_Siddhi_parser/gen/SiddhiQLLexer');
     var SiddhiQLGrammarParser=require('../client_side_Siddhi_parser/gen/SiddhiQLParser');
     var KeyPrinter=require('../client_side_Siddhi_parser/gen/KeyPrinter');
-//
-//    //console.log(antlr4,exports);
-
 </script>
 
 
@@ -86,36 +83,6 @@
             editor.execCommand("startAutocomplete");
         }
     });
-
-    var wordList=[ {"word":"be","freq":30,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"t","freq":28,"score":300,"flags":"c","syllables":"1"},
-        {"word":"de","freq":27,"score":300,"flags":"c","syllables":"1"},
-        {"word":"d","freq":26,"score":300,"flags":"c","syllables":"1"},
-        {"word":"p","freq":26,"score":300,"flags":"c","syllables":"1"},
-        {"word":"pp","freq":26,"score":300,"flags":"","syllables":"1"},
-        {"word":"di","freq":23,"score":300,"flags":"c","syllables":"1"},
-        {"word":"g","freq":23,"score":300,"flags":"c","syllables":"1"},
-        {"word":"tea","freq":23,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"bee","freq":21,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"te","freq":21,"score":300,"flags":"c","syllables":"1"},
-        {"word":"je","freq":20,"score":300,"flags":"c","syllables":"1"},
-        {"word":"ti","freq":20,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"pea","freq":19,"score":300,"flags":"bc","syllables":"1"}];
-
-    var rhymeCompleter = {
-        getCompletions: function(editor, session, pos, prefix, callback) {
-            if (prefix.length === 0) { callback(null, []); return }
-            // wordList like [{"word":"flow","freq":24,"score":300,"flags":"bc","syllables":"1"}]
-
-            console.log(editor,session,pos,prefix,callback);
-            callback(null, wordList.map(function(ea) {
-                return {name: ea.word, value: ea.word, score: ea.score, meta: "rhyme"}
-            }));
-        }
-    }
-
-    //langTools.addCompleter(rhymeCompleter);
-
 
     editor.getSession().on('change', function(e) {
 
