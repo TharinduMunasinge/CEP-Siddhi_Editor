@@ -84,6 +84,8 @@
         }
     });
 
+    var lastErrors=1;
+
     editor.getSession().on('change', function(e) {
 
         //to remove the existing error markers and validate again
@@ -107,11 +109,13 @@
         var printer = new KeyPrinter.KeyPrinter();
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
 
-        if(parser._syntaxErrors==0)
+        if(parser._syntaxErrors==0 && lastErrors>0)
         {
             validateQueries(expression);
 
         }
+
+        lastErrors=parser._syntaxErrors;
 
 
     });
