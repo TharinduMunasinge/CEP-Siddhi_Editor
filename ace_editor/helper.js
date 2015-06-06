@@ -1,7 +1,7 @@
 /**
- * Created by tharindu on 6/8/15.
+ * Created by tharindu on 6/1/15.
  */
-function validateQueries(executionPlan) {
+function validateQueries(executionPlan,line) {
 
     if (executionPlan == "") {
         console.log("Query expressions cannot be empty.");
@@ -18,7 +18,7 @@ function validateQueries(executionPlan) {
                 console.log("Queries are valid!");
                 return;
             } else {
-                console.log(resultText);
+                console.log(resultText,line);
                 return;
             }
         }

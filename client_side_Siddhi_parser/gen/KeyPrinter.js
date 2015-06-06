@@ -12,14 +12,49 @@ KeyPrinter = function() {
 KeyPrinter.prototype = Object.create(SiddhiQLGrammarListener.prototype);
 KeyPrinter.prototype.constructor = KeyPrinter;
 
-KeyPrinter.prototype.enterDefinition_stream = function(ctx) {
-    console.log("Oh, a enter Stream!",ctx);
-
-};
-
-
 KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
-    console.log("Oh, a exit Stream!", ctx.attribute_name(0).name());
-
+    updateTable(ctx)
 };
+
+function updateTable(ctx){
+    window.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop),line:ctx.start.line});
+    console.log(window.EditorTable);
+}
+
+KeyPrinter.prototype.exitError = function(ctx) {
+    updateTable(ctx)
+};
+
+
+// Exit a parse tree produced by SiddhiQLParser#execution_element.
+KeyPrinter.prototype.exitExecution_element = function(ctx) {
+    updateTable(ctx)
+};
+
+
+
+
+// Exit a parse tree produced by SiddhiQLParser#definition_stream.
+KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
+    updateTable(ctx)
+};
+
+
+
+
+
+// Exit a parse tree produced by SiddhiQLParser#definition_table.
+KeyPrinter.prototype.exitDefinition_table = function(ctx) {
+    updateTable(ctx)
+};
+
+
+
+
+// Exit a parse tree produced by SiddhiQLParser#definition_function.
+KeyPrinter.prototype.exitDefinition_function = function(ctx) {
+    updateTable(ctx)
+};
+
+
 exports.KeyPrinter = KeyPrinter;

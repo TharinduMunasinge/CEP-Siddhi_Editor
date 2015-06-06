@@ -106,14 +106,24 @@
 
         parser.buildParseTrees = true;
         var tree = parser.parse();
+
+        window.EditorTable=[];
+
         var printer = new KeyPrinter.KeyPrinter();
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
 
-        if(parser._syntaxErrors==0 && lastErrors>0)
-        {
-            validateQueries(expression);
 
+
+        if(parser._syntaxErrors==0 && lastErrors>0 )
+        {
+
+            var query="";
+            for(i=0;i<window.EditorTable.length;i++) {
+                query+=window.EditorTable[i].state+" ; \n";
+                validateQueries(query,window.EditorTable[i].line);
+            }
         }
+
 
         lastErrors=parser._syntaxErrors;
 
