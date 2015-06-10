@@ -1,0 +1,69 @@
+<html>
+  <head>
+
+
+<script src='lib/require.js'></script>
+
+      <script>
+
+          var antlr4 = require('./antlr4/index');
+
+          var SiddhiQLGrammarLexer=require('./gen/SiddhiQLGrammarLexer');
+          var SiddhiQLGrammarParser=require('./gen/SiddhiQLGrammarParser');
+          var KeyPrinter=require('./gen/KeyPrinter');
+
+          //console.log(antlr4,exports);
+
+      </script>
+
+
+    <script type="text/javascript">
+
+    function init() {
+      var evalButton = document.getElementById("eval");
+      evalButton.onclick = evalExpression;
+    }
+
+    function evalExpression() {
+      document.getElementById("answer").innerHTML = "";
+      var expression = document.getElementById("exp").value;
+      if(expression) {
+        var  txt=new antlr4.InputStream(expression)
+
+          //console.log(txt);
+        var lexer = new SiddhiQLGrammarLexer.SiddhiQLGrammarLexer(txt);
+        var tokens = new  antlr4.CommonTokenStream(lexer);
+        var parser = new SiddhiQLGrammarParser.SiddhiQLGrammarParser(tokens);
+
+
+//        var nodes = new org.antlr.runtime.tree.CommonTreeNodeStream(parser.parse().getTree());
+//        nodes.setTokenStream(tokens);
+//        var walker = new ExpWalker(nodes);
+//        var value = walker.walk();
+
+
+          parser.buildParseTrees = true;
+          var tree = parser.execution_plan();
+          console.log(KeyPrinter)
+
+          var printer = new KeyPrinter.KeyPrinter();
+
+          antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
+
+
+          console.log(tree);
+         // document.getElementById("answer").innerHTML = expression + " = " + value;
+      }
+      else {
+        document.getElementById("exp").value = "enter an expression here first"; 
+      }
+    }
+
+    </script>
+  </head>
+  <body onload="init()">
+    <textarea rows=10 cols=100 id="exp" type="text" size="35" ></textarea>
+    <button id="eval">evaluate</button>
+    <div id="answer"></div>
+  </body>
+</html>

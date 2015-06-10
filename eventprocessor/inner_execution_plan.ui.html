@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Intelligent Siddhi Editor</title>
+    <style type="text/css" media="screen">
+        body {
+            overflow: hidden;
+        }
+
+        #editor {
+            margin: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<pre id="editor"></pre>
+
+<script src="../eventprocessor/js/ace_editor/src/ace.js"></script>
+<!-- load ace language tools -->
+<script src="../eventprocessor/js/ace_editor/src/ext-language_tools.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.2.0/prototype.js"></script>
+
+<script src='../eventprocessor/js/client_side_Siddhi_parser/lib/require.js'></script>
+
+<script>
+
+    var antlr4 = require('../client_side_Siddhi_parser/antlr4/index');
+//
+    var SiddhiQLGrammarLexer=require('../client_side_Siddhi_parser/gen/SiddhiQLLexer');
+    var SiddhiQLGrammarParser=require('../client_side_Siddhi_parser/gen/SiddhiQLParser');
+    var KeyPrinter=require('../client_side_Siddhi_parser/gen/KeyPrinter');
+</script>
+
+
+
+<!-- load ace -->
+
+<script>
+    // trigger extension
+    var langTools = ace.require("ace/ext/language_tools");
+    editor = ace.edit("editor");
+
+    window.queryEditor=editor;
+    editor.save=function (){
+        console.log("Saved");
+    }
+
+    editor.session.setMode("ace/mode/siddhi");
+    editor.setTheme("ace/theme/tomorrow");
+
+    var Range = ace.require("ace/range").Range
+
+
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+
+    editor.getSession().setUseWrapMode(true);
+    editor.getSession().setTabSize(4);
+    editor.getSession().setUseSoftTabs(true);
+
+    editor.setShowFoldWidgets(true);
+    editor.setBehavioursEnabled(true);
+    editor.setHighlightSelectedWord(true);
+    editor.setHighlightActiveLine(true);
+    editor.setDisplayIndentGuides(true);
+    editor.setShowPrintMargin(false);
+
+    document.getElementById('editor').style.fontSize='18px';
+
+
+
+
+    editor.commands.on("afterExec", function(e){
+        if (e.command.name == "insertstring" && /^[\@.]$/.test(e.args)) {
+            editor.execCommand("startAutocomplete");
+        }
+    });
+
+    var lastErrors=1;
+
+    editor.getSession().on('change', function(e) {
+
+        //to remove the existing error markers and validate again
+        if(window.errormarker) {
+            editor.session.removeMarker(window.errormarker);
+            editor.session.clearAnnotations();
+            window.errormarker=undefined;
+        }
+
+
+        var expression=editor.getValue();
+
+        var  txt=new antlr4.InputStream(expression)
+
+        var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);
+        var tokens = new  antlr4.CommonTokenStream(lexer);
+        var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);
+
+        parser.buildParseTrees = true;
+        var tree = parser.parse();
+
+        window.EditorTable=[];
+
+        var printer = new KeyPrinter.KeyPrinter();
+        antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
+
+
+
+        if(parser._syntaxErrors==0 && lastErrors>0 )
+        {
+
+            var query="";
+            for(i=0;i<window.EditorTable.length;i++) {
+                query+=window.EditorTable[i].state+" ; \n";
+                validateQueries(query,window.EditorTable[i].line);
+            }
+        }
+
+
+        lastErrors=parser._syntaxErrors;
+
+
+    });
+
+
+
+
+</script>
+
+<script src="../eventprocessor/js/create_execution_plan_helper.js"></script>
+
+</body>
+</html>
