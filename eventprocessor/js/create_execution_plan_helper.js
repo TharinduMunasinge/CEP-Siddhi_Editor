@@ -42,6 +42,83 @@ function validateQueries() {
 }
 
 
+function combine(array1,array2){
+    return array1.concat(array2);
+}
+
+function validateQueries2(executionPlan,line) {
+
+    if (executionPlan == "") {
+        console.log("Query expressions cannot be empty.");
+        return;
+    }
+
+    new Ajax.Request('../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp', {
+        method:'POST',
+        asynchronous:true,
+        parameters:{executionPlan:executionPlan },
+        onSuccess:function (callbackMessage) {
+            var resultText = callbackMessage.responseText.trim();
+            if (resultText == "success") {
+                console.log("Queries are valid!");
+                return;
+            } else {
+
+                window.semanticErrorList.splice(0,window.semanticErrorList.length);
+
+                window.semanticErrorList.push({row:line , text:resultText,type:"error"});
+
+                window.editor.session.setAnnotations(window.semanticErrorList);
+                console.log(window.editor.session.getAnnotations());
+
+                return;
+            }
+        }
+    });
+}
+
+function validateQueries3(executionPlan,line,checkingQuery) {
+
+    if (executionPlan == "") {
+        console.log("Query expressions cannot be empty.");
+        return;
+    }
+
+    jQuery.ajax({
+            type: "POST",
+            url: "../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp",
+            async: true,
+            data: {executionPlan: executionPlan},
+            success: function (resultText) {
+
+                resultText = resultText.trim();
+                window.semanticErrorList.splice(0, window.semanticErrorList.length);
+
+                if (resultText == "success") {
+
+                    window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+
+
+                    console.log("Queries are valid!");
+                    return;
+                } else {
+
+                    window.semanticErrorList.push({
+                        row: line - 1,
+                        text: resultText,
+                        type: "error",
+                        inputText: checkingQuery
+                    });
+
+                    window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+
+                    return;
+                }
+            }
+        }
+    );
+
+}
 
 function createImportedStreamDefinition(element) {
     var selectedVal = element.options[element.selectedIndex].value;
