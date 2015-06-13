@@ -129,12 +129,32 @@
 
     editor.getSession().on('change', function(e) {
 
-        //to remove the existing error markers and validate again
-        if(window.errormarker) {
-            editor.session.removeMarker(window.errormarker);
-            editor.session.clearAnnotations();
-            window.errormarker=undefined;
+        var position=editor.getCursorPosition();
+        if(e.data.text=="\n"){
+//            console.log(editor.getCursorPosition());
+
+            for(var index=0;index<semanticErrorList.length;index++){
+                if(semanticErrorList[index].row>position.row ||( semanticErrorList[index].row==position.row && position.column==0)){
+                    semanticErrorList[index].row++;
+                }
+            }
+        };
+
+        //      console.log(e.data.text=="\b")
+        if(e.data.action=="removeLines"){
+            for(var index=0;index<semanticErrorList.length;index++){
+                if(semanticErrorList[index].row>position.row ||( semanticErrorList[index].row==position.row && position.column==0)){
+                    semanticErrorList[index].row--;
+                }
+            }
+        };
+
+        if(window.syntaxErrorList.length>0) {
+            //   editor.session.clearAnnotations();
+            window.syntaxErrorList.splice(0,window.syntaxErrorList.length);
         }
+
+
 
         var expression=editor.getValue();
         var  txt=new antlr4.InputStream(expression)
