@@ -30,8 +30,8 @@
 
 <script src="js/ace_editor/ace.js"></script>
 <script src="js/ace_editor/ext-language_tools.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.2.0/prototype.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/prototype.js"></script>
 <script src='../eventprocessor/js/client_side_Siddhi_parser/lib/require.js'></script>
 
 
@@ -78,46 +78,11 @@
 
 
 
-    editor.commands.on("afterExec", function(e){
-        if (e.command.name == "insertstring" && /^[\@.]$/.test(e.args)) {
-            editor.execCommand("startAutocomplete");
-        }
-    });
 
 
 
-/*
-    var wordList=[ {"word":"be","freq":30,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"t","freq":28,"score":300,"flags":"c","syllables":"1"},
-        {"word":"de","freq":27,"score":300,"flags":"c","syllables":"1"},
-        {"word":"d","freq":26,"score":300,"flags":"c","syllables":"1"},
-        {"word":"p","freq":26,"score":300,"flags":"c","syllables":"1"},
-        {"word":"pp","freq":26,"score":300,"flags":"","syllables":"1"},
-        {"word":"di","freq":23,"score":300,"flags":"c","syllables":"1"},
-        {"word":"g","freq":23,"score":300,"flags":"c","syllables":"1"},
-        {"word":"tea","freq":23,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"bee","freq":21,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"te","freq":21,"score":300,"flags":"c","syllables":"1"},
-        {"word":"je","freq":20,"score":300,"flags":"c","syllables":"1"},
-        {"word":"ti","freq":20,"score":300,"flags":"bc","syllables":"1"},
-        {"word":"pea","freq":19,"score":300,"flags":"bc","syllables":"1"}];
-
-    var rhymeCompleter = {
-        getCompletions: function(editor, session, pos, prefix, callback) {
-            if (prefix.length === 0) { callback(null, []); return }
-            console.log(editor,session,pos,prefix,callback);
-            callback(null, wordList.map(function(ea) {
-                return {name: ea.word, value: ea.word, score: ea.score, meta: "rhyme"}
-            }));
-        }
-    }
-
-    langTools.addCompleter(rhymeCompleter);
-
-*/
-
-
-
+    lastEdit=0;
+    var myVar =0
 
 
 
@@ -172,24 +137,47 @@
         window.EditorTable=[];
         var printer = new KeyPrinter.KeyPrinter();
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
-
+        for(index=0;index<EditorTable.length;index++)
+        {
+            console.log("Statements" ,EditorTable[index]);
+        }
 
 
         if(parser._syntaxErrors==0 && (previousParserTree!=tree.toStringTree(tree,parser)))
         {
-            var query="";
-            for(var i=0;i<window.EditorTable.length;i++) {
-                query+=window.EditorTable[i].state+"  \n";
-                validateQueries3(query,window.EditorTable[i].line,window.EditorTable[i].state);
+            mycheck();
 
-            }
         }
 
         previousParserTree=tree.toStringTree(tree,parser);
         lastErrors=parser._syntaxErrors;
+
+        lastEdit=Date.now();
    });
 
 
+
+    function mycheck(){
+        clearInterval(myVar);
+        myVar= setInterval(function(){ check()}, 3000);
+    }
+    var check = function(){
+
+        if(Date.now()-lastEdit>=3000) {
+            var isValid=validateQueries3(editor.getValue(),true);
+            console.log("checked value"+isValid);
+            if(!isValid) {
+                var query = "";
+                for (var i = 0; i < window.EditorTable.length; i++) {
+                    query += window.EditorTable[i].state + "  \n";
+                    validateQueries3(query, false, window.EditorTable[i].line, window.EditorTable[i].state);
+                }
+            }
+
+        }
+
+        clearInterval(myVar);
+    }
 
 
 </script>
