@@ -13,9 +13,10 @@ KeyPrinter.prototype = Object.create(SiddhiQLGrammarListener.prototype);
 KeyPrinter.prototype.constructor = KeyPrinter;
 
 KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
-    var tempStrem =new autocompletion.STREAM();
+    var tempStrem =new completionEngine.STREAM();
     tempStrem.setStreamFromDefineStatement(ctx);
-    autocompletion.streams.push(tempStrem);
+    completionEngine.streamList.addStream(tempStrem);
+
     updateTable(ctx)
 };
 
