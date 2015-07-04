@@ -20,10 +20,11 @@ KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
     updateTable(ctx)
 };
 
-function updateTable(ctx){
-    window.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop),line:ctx.start.line});
+function updateTable(ctx,seperator){
+    window.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop)+seperator,line:ctx.start.line});
     console.log(window.EditorTable);
 }
+
 
 KeyPrinter.prototype.exitError = function(ctx) {
     updateTable(ctx)
@@ -38,18 +39,14 @@ KeyPrinter.prototype.exitExecution_element = function(ctx) {
 
 
 
-// Exit a parse tree produced by SiddhiQLParser#definition_stream.
-KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
-    updateTable(ctx)
-};
-
-
-
-
-
 // Exit a parse tree produced by SiddhiQLParser#definition_table.
 KeyPrinter.prototype.exitDefinition_table = function(ctx) {
-    updateTable(ctx)
+    var tempTable =new completionEngine.TABLE();
+    tempTable.setTableFromDefineStatement(ctx);
+    completionEngine.tableList.addStream(tempTable);
+    console.log("tempTable Defintion",tempTable);
+    updateTable(ctx," ;")
+
 };
 
 

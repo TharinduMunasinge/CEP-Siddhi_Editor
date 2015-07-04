@@ -7,6 +7,9 @@
 
     window.completionEngine = completionEngine;
     completionEngine.streamList = new StreamList();
+    completionEngine.tableList=new TableList();
+
+
     completionEngine.STREAM = Stream;
 
 
