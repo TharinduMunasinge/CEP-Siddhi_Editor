@@ -14,7 +14,6 @@
         this.id;
         this.attributeNames = [];
         this.attributeTypes = [];
-
     }
 
     Stream.prototype.setStreamFromDefineStatement = function (ctx) {
@@ -74,6 +73,83 @@
                 status = true;
         })
         return status;
+    }
+
+
+
+
+    //Table class
+    function Table()
+    {
+        this.id;
+        this.attributeNames=[];
+        this.attributeTypes=[];
+    }
+
+    Table.prototype.setTableFromDefineStatement=function(ctx)
+    {
+        this.id=ctx.source().start.text;
+        var counter=0;
+        while(attrName=ctx.attribute_name(counter)){
+            this.attributeNames.push(ctx.attribute_name(counter).start.text);
+            this.attributeTypes.push(ctx.attribute_type(counter).start.text);
+            counter++;
+        }
+        this.cacheContext=ctx;
+    }
+    Table.prototype.getAttributeNameList=function(){
+        return this.attributeNames;
+    }
+    Table.prototype.getAttribute=function(i){
+        return this.attributeNames[i];
+    }
+
+
+
+    Table.prototype.setTableFromDefineStatement=function(ctx)
+    {
+        this.id=ctx.source().start.text;
+        var counter=0;
+        var attrName;
+        while(attrName=ctx.attribute_name(counter)){
+            this.attributeNames.push(ctx.attribute_name(counter).start.text);
+            this.attributeTypes.push(ctx.attribute_type(counter).start.text);
+            counter++;
+        }
+        this.cacheContext=ctx;
+    }
+    Table.prototype.getAttributeNameList=function(){
+        return this.attributeNames;
+    }
+    Table.prototype.getAttribute=function(i){
+        return this.attributeNames[i];
+    }
+
+
+
+
+    function TableList(){
+        this.tableList={};
+    }
+
+    TableList.prototype.addStream=function(tableObj)
+    {
+        this.tableList[tableObj.id]=tableObj;
+    }
+
+    TableList.prototype.getAttributeList=function(id)
+    {
+        return this.tableList[id].getAttributeNameList();
+    }
+
+    TableList.prototype.getTableIDList=function()
+    {
+        var temp=[];
+        for(var propertyName in this.tableList) {
+            temp.push(propertyName);
+        }
+
+        return temp;
     }
 
 
