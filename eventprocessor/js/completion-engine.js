@@ -44,12 +44,41 @@
 
     completionEngine.calculateCompletions=function(editor)
     {
-        var pos = editor.getCursorPosition();
-        // pos.column++;
-        completionEngine.wordList = makeCompletions(ruleBase[0].next)
-        //console.log(langTools.snippetCompleter);
+        var text=  editor.session.doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+        for(var a=0;a<ruleBase.length;a++)
+        {
+            console.log(a);
 
-     }
+
+
+            var regx = new RegExp(ruleBase[a].regex, "i");
+            //console.log(a,text,ruleBase[a],regx.test(text));
+            if (regx.test(text)) {
+                console.log(text, ruleBase[a]);
+                completionEngine.wordList = makeCompletions(ruleBase[a].next)
+                console.log(completionEngine.wordList);
+                return;
+            }
+
+        }
+
+
+
+
+    }
+
+
+    function executeFunctionByName(functionName, context , args ) {
+        var args = [].slice.call(arguments).splice(2);
+        var namespaces = functionName.split(".");
+        var func = namespaces.pop();
+        for(var i = 0; i < namespaces.length; i++) {
+            context = context[namespaces[i]];
+        }
+        return context[func].apply(this, args);
+    }
+
+
 
 
 
@@ -76,7 +105,10 @@
             regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
             next: completionEngine.dataTypes
         }
-        ,
+
+
+
+
 
     ];
 
