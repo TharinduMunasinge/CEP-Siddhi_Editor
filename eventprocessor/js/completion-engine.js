@@ -9,8 +9,38 @@
     completionEngine.streamList = new StreamList();
     completionEngine.tableList=new TableList();
 
-
+    completionEngine.wordList=[];
     completionEngine.STREAM = Stream;
+
+    completionEngine.SiddhiCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+
+            // wordList like [{"word":"flow","freq":24,"score":300,"flags":"bc","syllables":"1"}]
+            console.log("CODE IS WORKING")
+             completionEngine.calculateCompletions(editor);
+
+            callback(null, completionEngine.wordList.map(function(ea) {
+                return {definition:ea.value,value: ea.word, score: ea.score, meta: "intelli"}
+            }));
+        }
+    }
+
+    completionEngine.calculateCompletions=function(editor)
+    {   var strArray         =["define","from","partition"];
+        completionEngine.wordList=  strArray.map(function(d,i){
+            return {word:d,score:1}
+        })
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     function Stream() {
