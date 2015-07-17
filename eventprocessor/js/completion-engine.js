@@ -52,10 +52,14 @@
 
 
             var regx = new RegExp(ruleBase[a].regex, "i");
-            //console.log(a,text,ruleBase[a],regx.test(text));
+
             if (regx.test(text)) {
-                console.log(text, ruleBase[a]);
-                completionEngine.wordList = makeCompletions(ruleBase[a].next)
+                if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
+                    completionEngine.wordList = makeCompletions(ruleBase[a].next)
+
+                } else {
+                    completionEngine.wordList = executeFunctionByName(ruleBase[a].next, window, [text, regx]);
+                }
                 console.log(completionEngine.wordList);
                 return;
             }
@@ -106,8 +110,18 @@
             next: completionEngine.dataTypes
         }
 
+        ,
+        {
+            regex:"\\w+((?!(define|from|partition)).)*$",
+            next:"completionEngine.$initialList"
+        }
+        ,
 
 
+        {
+            regex:"\\0*$",
+            next:"completionEngine.$initialList"
+        }
 
 
     ];
