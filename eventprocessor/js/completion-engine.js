@@ -10,7 +10,13 @@
     completionEngine.tableList=new TableList();
 
     completionEngine.wordList=[];
-    completionEngine.STREAM = Stream;
+
+
+    completionEngine.logicalOperatorList=["and","or","not","isNull(arg)","IS NULL"]  ;
+    completionEngine.dataTypes=["int","float","double","bool","long","time","object","string"]
+    completionEngine.STREAM= Stream;
+    completionEngine.TABLE= Table;
+
 
     completionEngine.SiddhiCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
@@ -25,12 +31,62 @@
         }
     }
 
-    completionEngine.calculateCompletions=function(editor)
-    {   var strArray         =["define","from","partition"];
-        completionEngine.wordList=  strArray.map(function(d,i){
-            return {word:d,score:1}
+    function makeCompletions(strArray , priority){
+        if(isNaN(priority))
+            priority=1;
+
+        return strArray.map(function(d,i){
+            return {word:d,score:priority}
         })
     }
+
+
+
+    completionEngine.calculateCompletions=function(editor)
+    {
+        var pos = editor.getCursorPosition();
+        // pos.column++;
+        completionEngine.wordList = makeCompletions(ruleBase[0].next)
+        //console.log(langTools.snippetCompleter);
+
+     }
+
+
+
+
+
+    var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
+    var anyChar= "(.|\\n)";
+    var ruleBase=[
+
+        {
+            regex:"insert\\s+((?!(into|;)).)*$",
+            next :["into","all","events","expired"]
+        },
+
+
+        {
+            regex:"define\\s*((?!(stream|table|function)).)*$",
+            next: ["stream","table","function"]
+        }
+        ,
+
+
+        {
+            regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
+            next: completionEngine.dataTypes
+        }
+        ,
+
+    ];
+
+
+
+
+
+
+
+
 
 
 
@@ -185,5 +241,37 @@
         return temp;
     }
 
+
+
+
+    function Function()
+    {
+        this.id;
+        this.lang;
+        this.returnType;
+        this.code;
+    }
+
+
+    function FunctionList(){
+        this.functionList={};
+    }
+
+    FunctionList.prototype.addStream=function(functionObj)
+    {
+        this.functionList[functionObj.id]=functionObj;
+    }
+
+
+
+    FunctionList.prototype.getFunctionIDList=function()
+    {
+        var temp=[];
+        for(var propertyName in this.functionList) {
+            temp.push(propertyName);
+        }
+
+        return temp;
+    }
 
 })();
