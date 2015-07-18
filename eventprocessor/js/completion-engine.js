@@ -44,6 +44,7 @@
 
     completionEngine.calculateCompletions=function(editor)
     {
+        var pos = editor.getCursorPosition();
         var text=  editor.session.doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
         for(var a=0;a<ruleBase.length;a++)
         {
@@ -84,6 +85,10 @@
 
 
 
+    completionEngine.$initialList=function(){
+        var intialArray=["define","from","partition","@"];
+        return makeCompletions(intialArray)
+    }
 
 
 
@@ -109,8 +114,17 @@
             regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
             next: completionEngine.dataTypes
         }
-
         ,
+        {
+            regex:"@(p(l(a(n?)?)?)?)((?![)]).)*$",
+            next:['Plan:name(\'Name of the plan\')', 'Plan:description(\'Description of the plan\')', 'Plan:trace(\'true|false\')', 'Plan:statistics(\'true|false\')', 'Import(\'StreamName\')', 'Export(\'StreamName\')']
+        }
+        ,
+        {
+            regex:"@\\w*((?![)]).)*$",
+            next:['Config(async=true)','info(name=\'stream_id\')','Plan:name(\'Name of the plan\')', 'Plan:description(\'Description of the plan\')', 'Plan:trace(\'true|false\')', 'Plan:statistics(\'true|false\')', 'Import(\'StreamName\')', 'Export(\'StreamName\')']
+        },
+
         {
             regex:"\\w+((?!(define|from|partition)).)*$",
             next:"completionEngine.$initialList"
