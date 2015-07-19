@@ -1801,7 +1801,7 @@ var snippetCompleter = {
     }
 };
 
-var completers = [snippetCompleter, textCompleter, keyWordCompleter];
+var completers = [];
 exports.setCompleters = function(val) {
     completers = val || [];
 };

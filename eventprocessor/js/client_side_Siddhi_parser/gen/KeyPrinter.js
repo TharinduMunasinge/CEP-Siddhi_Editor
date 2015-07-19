@@ -17,7 +17,7 @@ KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
     tempStrem.setStreamFromDefineStatement(ctx);
     completionEngine.streamList.addStream(tempStrem);
 
-    updateTable(ctx)
+    updateTable(ctx,";")
 };
 
 function updateTable(ctx,seperator){
@@ -33,7 +33,7 @@ KeyPrinter.prototype.exitError = function(ctx) {
 
 // Exit a parse tree produced by SiddhiQLParser#execution_element.
 KeyPrinter.prototype.exitExecution_element = function(ctx) {
-    updateTable(ctx)
+    updateTable(ctx,";")
 };
 
 
@@ -54,7 +54,7 @@ KeyPrinter.prototype.exitDefinition_table = function(ctx) {
 
 // Exit a parse tree produced by SiddhiQLParser#definition_function.
 KeyPrinter.prototype.exitDefinition_function = function(ctx) {
-    updateTable(ctx)
+    updateTable(ctx,";")
 };
 
 
