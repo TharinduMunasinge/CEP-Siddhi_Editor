@@ -90,6 +90,17 @@
         return makeCompletions(intialArray)
     }
 
+    completionEngine.$fromPhraseStreamIdList=function(){
+        var essentialKeyWords=["outer","left","into","all","events","expired","insert","select","as","join","on","every"]
+
+        var temp=completionEngine.streamList.getStreamIDList();
+
+        temp=makeCompletions(temp,2);
+        essentialKeyWords=makeCompletions(essentialKeyWords,1);
+        essentialKeyWords=essentialKeyWords.concat(temp);
+        return essentialKeyWords;
+    }
+
 
 
 
@@ -109,7 +120,10 @@
         }
         ,
 
-
+        {
+            regex:"from\\s+((?!select).)*$",    //join ,on
+            next : "completionEngine.$fromPhraseStreamIdList"
+        },
         {
             regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
             next: completionEngine.dataTypes
