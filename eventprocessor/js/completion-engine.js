@@ -10,6 +10,741 @@
     completionEngine.tableList=new TableList();
 
     completionEngine.wordList=[];
+    completionEngine.extensions={
+        math: {
+            functions: {
+                abs: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                acos: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                asin: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+
+                atan: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                bin: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                ceil: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+                conv: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                copySign: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                cos: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+
+
+                cosh: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                cbrt: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                e: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                exp: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                floor: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+
+
+                getExponent: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                hex: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+                isInfinite: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                ln: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+
+                log2: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                log10: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                log: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                max: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+                min: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                oct: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                parseDouble: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+                parseFloat: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                parseInt: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                parseLong: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                pi: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                signum: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                sin: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                sinh: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+                sqrt: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+
+
+                tanh: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ],
+
+                toDegrees: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                tan: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+
+                toRadians: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+                ]
+
+
+            },
+            streamProcessors: {},
+            windowProcessors:{}
+        },
+        str:{
+            functions:{
+                charAt: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                coalesce: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                concat: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                hex: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                length: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                lower: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                regexp: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                repeat: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                replaceAll: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],replaceFirst: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],reverse: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],strcmp: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],substr: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],trim: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],unhex: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                upper: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ]
+            },
+            streamProcessors:{},
+            windowProcessors:{}
+        },
+        geo:{
+            functions:{
+                intersects: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],within: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],withindistance: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ]
+
+            },
+            streamProcessors:{
+                crosses: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                stationary: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                proximity: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ]
+            }
+            ,
+            windowProcessors:{
+
+            }
+        },
+        r:{
+            functions:{
+
+            },
+            streamProcessors:{
+                eval: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ],
+                evalSource: [
+                    {
+                        Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                        argNames: ["p1"],
+                        argTypes: [["float", "double"]],
+                        returnType: ["float", "double"]
+                    }
+
+                ]
+            },
+            windowProcessors:{
+
+            }
+        }
+    };
+
+    completionEngine.system={
+        functions:{
+            avg: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            coalesce: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            convert: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            instanceOfBoolean: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            instanceOfDouble: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            instanceOfFloat: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            instanceOfLong: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            instanceOfString: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            UUID: [
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ]
+        },
+        streamProcessors:{},
+        windowProcessors:{
+            time:[
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            timeBatch:[
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+            length:[
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ],
+
+            lengthBatch:[
+                {
+                    Description: "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+                    argNames: ["p1"],
+                    argTypes: [["float", "double"]],
+                    returnType: ["float", "double"]
+                }
+
+            ]
+        }
+    };
+
 
 
     completionEngine.logicalOperatorList=["and","or","not","isNull(arg)","IS NULL"]  ;
