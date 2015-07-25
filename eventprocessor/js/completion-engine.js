@@ -897,6 +897,75 @@
     }
 
 
+    completionEngine.$selectPhraseAttributesList=function(args){
+//Stream Alias yet to be handled , both in 'stream as e' form and "e1=stream"
+        var keyWords=["as", "insert","group by" , "having"]
+        keyWords=makeCompletions(keyWords,1);
+
+
+        var sysFunctions=getSystemFunctemtionNames()
+        sysFunctions=sysFunctions.map(function(d){
+            return d+"(args)";
+        })
+
+        sysFunctions=makeCompletions(sysFunctions,2);
+
+        var ns=getExtensionNamesSpaces();
+        ns= ns.map(function(d){
+            return d+":";
+        })
+        ns=makeCompletions(ns,3);
+
+        var streamIds=completionEngine.streamList.getStreamIDList();
+
+        streamIds=streamIds.map(function(d){
+            return d+".";
+        })
+        streamIds=makeCompletions(streamIds,4);
+
+
+
+
+        var result=args[1].exec(args[0]);
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var fromPhrase= /from(.*)select/i.exec(result[0]);
+
+        console.log(fromPhrase);
+
+
+
+
+        var list=[];
+        for(var index=0;index<streamNames.length;index++)
+        {
+
+            if(fromPhrase[1].indexOf(streamNames[index])>=0)
+            {
+                tempList=completionEngine.streamList.getAttributeList(streamNames[index])
+                console.log(tempList)
+                list=list.concat(tempList);
+
+                console.log(list);
+            }
+
+
+        }
+
+        var tempList=[];
+        list=makeCompletions(list,5)
+        tempList=(keyWords.concat(ns));
+        tempList=tempList.concat(streamIds);
+         tempList=tempList.concat(sysFunctions);
+        tempList=tempList.concat(list);
+        //insert, Aggregate functions  , as In From phrase , e1.
+        return  tempList;
+    }
+
+
+
+
+
+
 
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
@@ -918,6 +987,10 @@
         {
             regex:"from\\s+((?!select).)*$",    //join ,on
             next : "completionEngine.$fromPhraseStreamIdList"
+        },
+        {
+            regex:"from(.)*select\\s+((?!insert).)*$",
+            next:"completionEngine.$selectPhraseAttributesList"
         },
         {
             regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
