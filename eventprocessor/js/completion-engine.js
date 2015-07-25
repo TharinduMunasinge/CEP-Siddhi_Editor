@@ -961,7 +961,41 @@
         return  tempList;
     }
 
+    completionEngine.$nameSpacePhrase=function(args){
+        var result=args[1].exec(args[0]);
+        var streamNames=completionEngine.streamList.getStreamIDList();
 
+        var windowRegex=/#window.(\w+):$/i
+        var streamRegex=/#(\w+):$/i;
+        var functionRegex=/(\w+):$/i;
+        var tempArray=[];
+        var ns="";
+        if(windowRegex.test(result[0]))
+        {
+            var windowResult=windowRegex.exec(result[0]);
+            ns=windowResult[1];
+            tempArray=getExtensionWindowprocessors(ns);
+        }
+        else if(streamRegex.test(result[0]))
+        {
+            var streamFunctionPhrase=streamRegex.exec(result[0]);
+            ns=streamFunctionPhrase[1];
+            tempArray=getExtensionStreamProcessors(ns);
+
+        }
+        else if(functionRegex.test(result[0])){
+            var functionPhrase=functionRegex.exec(result[0]);
+            ns=functionPhrase[1];
+            tempArray=getExtensionFunctionNames(ns);
+        }
+        else{
+
+        }
+        tempArray=tempArray.map(function(d){return d+"(argList)"});
+
+        return makeCompletions(tempArray);
+
+    }
 
 
 
@@ -970,8 +1004,12 @@
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
     var anyChar= "(.|\\n)";
+    var oneDataType="(int|long|double|bool|object|string|time)"
     var ruleBase=[
-
+        {
+            regex: "from(.)+((?!select).)*#(.)+:$",
+            next: "completionEngine.$nameSpacePhrase"
+        },
         {
             regex:"insert\\s+((?!(into|;)).)*$",
             next :["into","all","events","expired"]
@@ -995,6 +1033,23 @@
         {
             regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
             next: completionEngine.dataTypes
+        }
+        ,
+        {
+            regex:"from(.)*window(.)*select(.)*\\s+((?!insert).)*$",
+            next:["group by","having"] //aggregate functions + attributes list
+        }
+
+        ,
+        {
+            regex:"from(.)*window(.)*select(.)*group\\s+by\\s+(.)*((?!insert).)*$",
+            next:["having","insert"] //aggregate functions + attributes list
+        }
+
+        ,
+        {
+            regex:"from(.)*window(.)*select(.)*having(.)*((?!insert).)*$",
+            next:["having","insert"] //aggregate functions + attributes list
         }
         ,
         {
