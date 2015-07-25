@@ -820,6 +820,66 @@
 
 
 
+    function getExtensionNamesSpaces(){
+        var tempList=[];
+        for(var propertyName in completionEngine.extensions) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+    function getExtensionFunctionNames(ns){
+        var tempList=[];
+        for(var propertyName in completionEngine.extensions[ns].functions) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+    function getExtensionWindowprocessors(ns){
+        var tempList=[];
+        for(var propertyName in completionEngine.extensions[ns].windowProcessors) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+    function getExtensionStreamProcessors(ns){
+        var tempList=[];
+        for(var propertyName in completionEngine.extensions[ns].streamProcessors) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+
+    function getSystemFunctemtionNames(){
+        var tempList=[];
+        for(var propertyName in completionEngine.system.functions) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+    function getSystemStreamProcessors(){
+        var tempList=[];
+        for(var propertyName in completionEngine.system.streamProcessors) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+    function getSystemStreamProcessors(){
+        var tempList=[];
+        for(var propertyName in completionEngine.system.windowProcessors) {
+            tempList.push(propertyName);
+        }
+        return tempList;
+    }
+
+
+
+
+
+
+
+
+
+
     completionEngine.$initialList=function(){
         var intialArray=["define","from","partition","@"];
         return makeCompletions(intialArray)
