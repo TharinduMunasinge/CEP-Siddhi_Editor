@@ -1041,6 +1041,56 @@
         return makeCompletions(defaultArray);
     }
 
+    completionEngine.$filterPhrase=function(args){
+        var fromRegxp=/from((?:.(?!from))+)$/i
+        var result=fromRegxp.exec(args[0]);
+        console.log(result);
+        var start=-1;
+        var temp="";
+        var flag=true;
+
+
+        for(var i=result[0].length-1;i>=0;i--)
+        {
+            if(start==0)
+            {
+                if(/\W/.test(result[0].charAt(i))) {
+                    if(flag)
+                        continue;
+                    else
+                        break;
+                }
+                else {
+                    flag=false;
+                    temp = result[0].charAt(i) + temp;
+                }
+            }
+
+            if(result[0].charAt(i)==']')
+                start--;
+
+            if(result[0].charAt(i)=='[')
+                start++;
+
+        }
+
+
+        var temparray=[];
+
+
+
+
+
+            var attrList=  completionEngine.streamList.getAttributeList(temp);
+            attrList=makeCompletions(attrList,2);
+
+            temparray=temparray.concat(attrList);
+
+
+        return temparray;
+    }
+
+
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
     var anyChar= "(.|\\n)";
@@ -1079,6 +1129,30 @@
             next: ["stream","table","function"]
         }
         ,
+        {
+            regex:"define\\s+function\\s+"+identifer+"\\s+$",
+            next: [" [language_name] "]
+        }
+        ,
+
+        {
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+$",
+            next: ["return"]
+        },
+        {
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+$",
+            next: completionEngine.dataTypes
+        }
+        ,
+        {
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+"+oneDataType+"\\s+$",
+            next: ["{ \"Function Body\"  }"]
+        },
+        {
+            regex:"from(.)*\\[((?!\\]).)*$",
+            next:"completionEngine.$filterPhrase"
+        },
+
 
         {
             regex:"from\\s+((?!select).)*$",    //join ,on
