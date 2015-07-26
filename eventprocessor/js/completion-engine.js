@@ -997,9 +997,49 @@
 
     }
 
+    completionEngine.$resolveVariable=function(args)
+    {
+
+
+        var result=args[1].exec(args[0]);
+        var tempList=[];
+        console.log(result);
 
 
 
+
+        if(completionEngine.streamList.hasStream(result[1]))
+            tempList=completionEngine.streamList.getAttributeList(result[1])
+
+        return makeCompletions(tempList,1);
+    }
+
+    completionEngine.$windowPhrase=function(args){
+        var defaultArray=["time(1 min)","timeBatch( 1 min)","length(10)","lengthBatch(10)","externalTime(timeStamp,windowTime)"]
+
+
+        var nsArray=getExtensionNamesSpaces();
+        nsArray=nsArray.map(function(d,i){
+            return d+":";
+        })
+
+        defaultArray=defaultArray.concat(nsArray);
+        return makeCompletions(defaultArray);
+    }
+
+    completionEngine.$processorPhrase=function(args){
+        var defaultArray=["window.","transform."];
+
+        //if built in streamProcessors exist , they should be included
+
+        var nsArray=getExtensionNamesSpaces();
+        nsArray=nsArray.map(function(d,i){
+            return d+":";
+        })
+
+        defaultArray=defaultArray.concat(nsArray)
+        return makeCompletions(defaultArray);
+    }
 
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
@@ -1007,14 +1047,32 @@
     var oneDataType="(int|long|double|bool|object|string|time)"
     var ruleBase=[
         {
+            regex: "from(.)+((?!select).)*#window\\.$",
+            next: "completionEngine.$windowPhrase"
+        }
+        ,
+        {
             regex: "from(.)+((?!select).)*#(.)+:$",
+            next: "completionEngine.$nameSpacePhrase"
+        },
+        {
+            regex: "(\\w+)\\:$",
             next: "completionEngine.$nameSpacePhrase"
         },
         {
             regex:"insert\\s+((?!(into|;)).)*$",
             next :["into","all","events","expired"]
         },
+        {
+            regex:"(\\w+)\\.$",
+            next:"completionEngine.$resolveVariable"
+        }
 
+        ,
+        {
+            regex: "from(.)+((?!select).)*#\\w*$",
+            next: "completionEngine.$processorPhrase"
+        },
 
         {
             regex:"define\\s*((?!(stream|table|function)).)*$",
