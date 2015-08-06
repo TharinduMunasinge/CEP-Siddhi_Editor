@@ -6,8 +6,9 @@
     var completionEngine = window.completionEngine || {};
 
     window.completionEngine = completionEngine;
-    completionEngine.streamList = new StreamList();
+    completionEngine.streamList=new StreamList();
     completionEngine.tableList=new TableList();
+    completionEngine.functionList=new FunctionList();
 
     completionEngine.wordList=[];
     completionEngine.extensions={
@@ -744,9 +745,8 @@
             ]
         }
     };
-
-
-
+    completionEngine.streamAliasList={};
+    completionEngine.eventStore={};
     completionEngine.logicalOperatorList=["and","or","not","isNull(arg)","IS NULL"]  ;
     completionEngine.dataTypes=["int","float","double","bool","long","time","object","string"]
     completionEngine.STREAM= Stream;
@@ -818,6 +818,24 @@
         return context[func].apply(this, args);
     }
 
+
+    function getStreamAliasList(){
+        var aliasList=[];
+        for(var propertyName in completionEngine.streamAliasList)
+        {
+            aliasList.push(propertyName)
+        }
+        return aliasList;
+    }
+
+    function getEventReferences(){
+        var aliasList=[];
+        for(var propertyName in completionEngine.eventStore)
+        {
+            aliasList.push(propertyName)
+        }
+        return aliasList;
+    }
 
 
     function getExtensionNamesSpaces(){
@@ -896,7 +914,6 @@
         return essentialKeyWords;
     }
 
-
     completionEngine.$selectPhraseAttributesList=function(args){
 //Stream Alias yet to be handled , both in 'stream as e' form and "e1=stream"
         var keyWords=["as", "insert","group by" , "having"]
@@ -904,7 +921,7 @@
 
 
         var sysFunctions=getSystemFunctemtionNames()
-        sysFunctions=sysFunctions.map(function(d){
+        sysFunctions=sysFunctions=sysFunctions.map(function(d){
             return d+"(args)";
         })
 
@@ -932,6 +949,16 @@
 
         console.log(fromPhrase);
 
+        completionEngine.$streamAlias(result[0]);
+        var aliasList=getStreamAliasList();
+        aliasList=aliasList.map(function(d){return d+"."});
+        aliasList=makeCompletions(aliasList,6);
+
+
+        completionEngine.$eventReference(result[0]);
+        var refList=getEventReferences();
+        refList=refList.map(function(d){return d+"."});
+        refList=makeCompletions(refList,7);
 
 
 
@@ -955,11 +982,99 @@
         list=makeCompletions(list,5)
         tempList=(keyWords.concat(ns));
         tempList=tempList.concat(streamIds);
-         tempList=tempList.concat(sysFunctions);
+        tempList=tempList.concat(refList);
+        tempList=tempList.concat(aliasList);
+        tempList=tempList.concat(sysFunctions);
         tempList=tempList.concat(list);
         //insert, Aggregate functions  , as In From phrase , e1.
         return  tempList;
     }
+
+    completionEngine.$windowPhrase=function(args){
+        var defaultArray=["time(1 min)","timeBatch( 1 min)","length(10)","lengthBatch(10)","externalTime(timeStamp,windowTime)"]
+
+
+        var nsArray=getExtensionNamesSpaces();
+        nsArray=nsArray.map(function(d,i){
+            return d+":";
+        })
+
+        defaultArray=defaultArray.concat(nsArray);
+        return makeCompletions(defaultArray);
+    }
+
+    completionEngine.$processorPhrase=function(args){
+        var defaultArray=["window.","transform."];
+
+        //if built in streamProcessors exist , they should be included
+
+        var nsArray=getExtensionNamesSpaces();
+        nsArray=nsArray.map(function(d,i){
+            return d+":";
+        })
+
+        defaultArray=defaultArray.concat(nsArray)
+        return makeCompletions(defaultArray);
+    }
+
+    completionEngine.$filterPhrase=function(args){
+        var fromRegxp=/from((?:.(?!from))+)$/i
+        var result=fromRegxp.exec(args[0]);
+        console.log(result);
+        var start=-1;
+        var temp="";
+        var flag=true;
+
+        completionEngine.eventStore={};
+        completionEngine.$eventReference(result[0]);
+        for(var i=result[0].length-1;i>=0;i--)
+        {
+            if(start==0)
+            {
+                if(/\W/.test(result[0].charAt(i))) {
+                    if(flag)
+                        continue;
+                    else
+                        break;
+                }
+                else {
+                    flag=false;
+                    temp = result[0].charAt(i) + temp;
+                }
+            }
+
+            if(result[0].charAt(i)==']')
+                start--;
+
+            if(result[0].charAt(i)=='[')
+                start++;
+
+        }
+
+
+        var temparray=[];
+        console.log("Event LIST ",temp)
+        if(completionEngine.eventStore.hasOwnProperty(temp)) {
+            temparray = ["last"]
+
+            temparray= makeCompletions(temparray)
+        }
+        else {
+
+
+            var refList=getEventReferences();
+            refList=makeCompletions(refList,1);
+
+            var attrList=  completionEngine.streamList.getAttributeList(temp);
+            attrList=makeCompletions(attrList,2);
+            temparray = temparray.concat(refList)
+            temparray=temparray.concat(attrList);
+        }
+
+        return temparray;
+    }
+
+
 
     completionEngine.$nameSpacePhrase=function(args){
         var result=args[1].exec(args[0]);
@@ -1005,8 +1120,14 @@
         var tempList=[];
         console.log(result);
 
+        completionEngine.$eventReference(args[0]);
+        completionEngine.$streamAlias(args[0]);
 
+        if(completionEngine.eventStore.hasOwnProperty(result[1]))
+            result[1]=completionEngine.eventStore[result[1]];
 
+        if(completionEngine.streamAliasList.hasOwnProperty(result[1]))
+            result[1]=completionEngine.streamAliasList[result[1]];
 
         if(completionEngine.streamList.hasStream(result[1]))
             tempList=completionEngine.streamList.getAttributeList(result[1])
@@ -1014,87 +1135,122 @@
         return makeCompletions(tempList,1);
     }
 
-    completionEngine.$windowPhrase=function(args){
-        var defaultArray=["time(1 min)","timeBatch( 1 min)","length(10)","lengthBatch(10)","externalTime(timeStamp,windowTime)"]
+    completionEngine.$streamAlias=function(str)
+    {
+        var fromRegxp=/from((?:.(?!from))+)$/i;
 
 
-        var nsArray=getExtensionNamesSpaces();
-        nsArray=nsArray.map(function(d,i){
-            return d+":";
-        })
+        var fromPhrase= fromRegxp.exec(str);
 
-        defaultArray=defaultArray.concat(nsArray);
-        return makeCompletions(defaultArray);
-    }
+        var asRegexp=/\s+as\s+(\w+)\s+/;
 
-    completionEngine.$processorPhrase=function(args){
-        var defaultArray=["window.","transform."];
+        var tokenArray=fromPhrase[1].split(asRegexp);
+        var streamIdList=completionEngine.streamList.getStreamIDList();
 
-        //if built in streamProcessors exist , they should be included
-
-        var nsArray=getExtensionNamesSpaces();
-        nsArray=nsArray.map(function(d,i){
-            return d+":";
-        })
-
-        defaultArray=defaultArray.concat(nsArray)
-        return makeCompletions(defaultArray);
-    }
-
-    completionEngine.$filterPhrase=function(args){
-        var fromRegxp=/from((?:.(?!from))+)$/i
-        var result=fromRegxp.exec(args[0]);
-        console.log(result);
-        var start=-1;
-        var temp="";
-        var flag=true;
-
-
-        for(var i=result[0].length-1;i>=0;i--)
+        var Alias={}
+        if(tokenArray.length>=2)
         {
-            if(start==0)
+            for(var i=0;i+1<tokenArray.length;i+=2)
             {
-                if(/\W/.test(result[0].charAt(i))) {
-                    if(flag)
-                        continue;
-                    else
-                        break;
+                var maxIndex=0;
+                var strId="";
+                for(var j=0;j<streamIdList.length;j++)
+                {
+                    var tempIndex=0;
+                    if(tempIndex=tokenArray[i].lastIndexOf(streamIdList[j])>=0){
+                        if(tempIndex>maxIndex)
+                            strId=streamIdList[j];
+                    }
                 }
-                else {
-                    flag=false;
-                    temp = result[0].charAt(i) + temp;
-                }
+
+                Alias[tokenArray[i+1]]=strId;
+                completionEngine.streamAliasList[tokenArray[i+1]]=strId;
             }
-
-            if(result[0].charAt(i)==']')
-                start--;
-
-            if(result[0].charAt(i)=='[')
-                start++;
-
         }
 
 
-        var temparray=[];
-
-
-
-
-
-            var attrList=  completionEngine.streamList.getAttributeList(temp);
-            attrList=makeCompletions(attrList,2);
-
-            temparray=temparray.concat(attrList);
-
-
-        return temparray;
+        return Alias;
     }
 
+    completionEngine.$eventReferenceHandler= function( args) {
 
+        var results=args[1].exec(args[0]);
+
+        completionEngine.$eventReference(args[0]);
+        completionEngine.$streamAlias(args[0]);
+        var ref=completionEngine.eventStore[results[1]];
+        var tempList=completionEngine.streamList.getAttributeList(ref);
+        return makeCompletions(tempList);
+
+    }
+    completionEngine.$eventReference =function(str)
+    {
+        var fromRegxp=/from((?:.(?!from))+)$/i;
+
+
+        var fromPhrase= fromRegxp.exec(str);
+
+        var eventRef=/(\w+\s*=\s*\w+)/;
+
+        var tokenArray=fromPhrase[1].split(eventRef);
+        var streamIdList=completionEngine.streamList.getStreamIDList();
+
+
+        for(var i=0;i<tokenArray.length;i++)
+        {
+
+            var strId="";
+            if(tokenArray[i].indexOf('=')>0 && tokenArray[i].indexOf('==')<0) {
+
+                var keyValue=tokenArray[i].split("=")
+                var ref=keyValue[0];
+                var value=keyValue[1];
+
+                //Check the match with stream ID
+                // for (var j = 0; j < streamIdList.length; j++) {
+                //    var tempIndex = 0;
+                //    if (tempIndex = tokenArray[i].lastIndexOf(streamIdList[j]) >= 0) {
+                //        if (tempIndex > maxIndex)
+                //            strId = streamIdList[j];
+                //    }
+                //}
+
+
+                completionEngine.eventStore[ref]=value;
+            }
+
+
+        }
+
+    }
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
     var anyChar= "(.|\\n)";
     var oneDataType="(int|long|double|bool|object|string|time)"
+
+    /**
+     *
+     * Non select  phrases in query
+     *
+     *
+     * object resolveness=> no aditional parameters
+
+     * clear for as handling
+     *
+     * Make expression work with new lines-DONE
+     *
+     *
+     * Partition handle
+     *
+     * As handling-> Stream As Done, attribute as not done
+     *  as and sequence availabble at from level
+     * refactor as/ref logic -> to dynamically calculate the stuff.
+     * Join Handling
+     * Sequence handling
+     *
+     *
+     */
+
     var ruleBase=[
         {
             regex: "from(.)+((?!select).)*#window\\.$",
@@ -1108,11 +1264,13 @@
         {
             regex: "(\\w+)\\:$",
             next: "completionEngine.$nameSpacePhrase"
-        },
+        }
+        ,
         {
-            regex:"insert\\s+((?!(into|;)).)*$",
-            next :["into","all","events","expired"]
-        },
+            regex:"(\\w+)\\[\\s*(\\d+|last|last-\\d+)\\s*\\]\\.$",
+            next:"completionEngine.$eventReferenceHandler"
+        }
+        ,
         {
             regex:"(\\w+)\\.$",
             next:"completionEngine.$resolveVariable"
@@ -1122,7 +1280,19 @@
         {
             regex: "from(.)+((?!select).)*#\\w*$",
             next: "completionEngine.$processorPhrase"
+        }
+
+        ,
+        {
+            regex:"from(.)*window(.)*select(.)*insert\\s+((?!(into|;)).)*$",
+            next:["all events  ","expired events  ","into"]
         },
+
+        {
+            regex:"insert\\s+((?!(into|;)).)*$",
+            next :["into","all","events","expired"]
+        },
+
 
         {
             regex:"define\\s*((?!(stream|table|function)).)*$",
@@ -1147,11 +1317,20 @@
         {
             regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+"+oneDataType+"\\s+$",
             next: ["{ \"Function Body\"  }"]
-        },
+        }
+        ,
+        {
+            regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
+            next: completionEngine.dataTypes
+        }
+        ,
+
+
         {
             regex:"from(.)*\\[((?!\\]).)*$",
             next:"completionEngine.$filterPhrase"
         },
+
 
 
         {
@@ -1162,11 +1341,7 @@
             regex:"from(.)*select\\s+((?!insert).)*$",
             next:"completionEngine.$selectPhraseAttributesList"
         },
-        {
-            regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
-            next: completionEngine.dataTypes
-        }
-        ,
+
         {
             regex:"from(.)*window(.)*select(.)*\\s+((?!insert).)*$",
             next:["group by","having"] //aggregate functions + attributes list
@@ -1184,6 +1359,8 @@
             next:["having","insert"] //aggregate functions + attributes list
         }
         ,
+
+
         {
             regex:"@(p(l(a(n?)?)?)?)((?![)]).)*$",
             next:['Plan:name(\'Name of the plan\')', 'Plan:description(\'Description of the plan\')', 'Plan:trace(\'true|false\')', 'Plan:statistics(\'true|false\')', 'Import(\'StreamName\')', 'Export(\'StreamName\')']
@@ -1205,6 +1382,8 @@
             regex:"\\0*$",
             next:"completionEngine.$initialList"
         }
+
+
 
 
     ];
