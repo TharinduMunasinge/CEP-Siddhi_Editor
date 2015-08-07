@@ -779,32 +779,53 @@
 
     completionEngine.calculateCompletions=function(editor)
     {
+        // var text= editor.getValue();
+
+
         var pos = editor.getCursorPosition();
+        // pos.column++;
+
+        //console.log(langTools.snippetCompleter);
         var text=  editor.session.doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+        var tempStatements=text.split(";");
+        text=tempStatements[tempStatements.length-1]
+
+
         for(var a=0;a<ruleBase.length;a++)
         {
             console.log(a);
 
 
+            if(ruleBase[a].hasOwnProperty("dfa"))
+            {
+                if(executeFunctionByName(ruleBase[a].dfa, window, [text])){
+                    if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
+                        completionEngine.wordList = makeCompletions(ruleBase[a].next)
 
-            var regx = new RegExp(ruleBase[a].regex, "i");
+                    } else {
 
-            if (regx.test(text)) {
-                if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
-                    completionEngine.wordList = makeCompletions(ruleBase[a].next)
+                        completionEngine.wordList = executeFunctionByName(ruleBase[a].next, window, [text]);
+                    }
 
-                } else {
-                    completionEngine.wordList = executeFunctionByName(ruleBase[a].next, window, [text, regx]);
+                    return;
                 }
-                console.log(completionEngine.wordList);
-                return;
             }
+            else {
+                var regx = new RegExp(ruleBase[a].regex, "i");
+                //console.log(a,text,ruleBase[a],regx.test(text));
+                if (regx.test(text)) {
+                    console.log(text, ruleBase[a]);
+                    if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
+                        completionEngine.wordList = makeCompletions(ruleBase[a].next)
 
+                    } else {
+                        completionEngine.wordList = executeFunctionByName(ruleBase[a].next, window, [text, regx]);
+                    }
+                    console.log(completionEngine.wordList);
+                    return;
+                }
+            }
         }
-
-
-
-
     }
 
 
@@ -892,6 +913,32 @@
 
 
 
+    completionEngine._checkNestedSquareBracketInFROMPhrase=function(arg)
+    {
+        var fromRegxp=/from((?:.(?!from))+)$/i;
+
+
+        var fromPhrase= fromRegxp.exec(arg[0]);
+
+        if(fromPhrase==null)
+            return false;
+        var bracketCouter=0;
+
+        for(var index=fromPhrase[1].length-1;index>=0;index--)
+        {
+
+            if(fromPhrase[1].charAt(index)=='[')
+                bracketCouter++;
+            else if(fromPhrase[1].charAt(index)==']')
+                bracketCouter--;
+
+            if(bracketCouter>0)
+                return true;
+        }
+
+        return false;
+
+    }
 
 
 
@@ -1331,7 +1378,10 @@
             next:"completionEngine.$filterPhrase"
         },
 
-
+        {
+            dfa:"completionEngine._checkNestedSquareBracketInFROMPhrase",
+            next:"completionEngine.$filterPhrase"
+        },
 
         {
             regex:"from\\s+((?!select).)*$",    //join ,on
