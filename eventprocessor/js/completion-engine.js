@@ -789,6 +789,10 @@
         var text=  editor.session.doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
         var tempStatements=text.split(";");
         text=tempStatements[tempStatements.length-1]
+        completionEngine.eventStore={};
+        completionEngine.streamAliasList={};
+
+        text=text.replace(/\s/g," "); //fix for multi line query identification issue
 
 
         for(var a=0;a<ruleBase.length;a++)
