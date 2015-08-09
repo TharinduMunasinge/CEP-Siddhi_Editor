@@ -7,7 +7,7 @@ ace.define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/
     var SiddhiHighlightRules = function() {
 
         var keywords = (
-            "STREAM|DEFINE|TABLE|FROM|PARTITION|WINDOW|SELECT|GROUP|BY|HAVING|INSERT|DELETE|UPDATE|RETURN|EVENTS|INTO|OUTPUT|EXPIRED|CURRENT|SNAPSHOT|FOR|RAW|OF|AS|OR|AND|ON|IS|NOT|WITHIN|WITH|BEGIN|END|NULL|EVERY|LAST|ALL|FIRST|JOIN|INNER|OUTER|RIGHT|LEFT|FULL|UNIDIRECTIONAL|YEARS|MONTHS|WEEKS|DAYS|HOURS|MINUTES|SECONDS|MILLISECONDS"
+            "STREAM|DEFINE|TABLE|FUNCTION|FROM|PARTITION|WINDOW|SELECT|GROUP|BY|HAVING|INSERT|DELETE|UPDATE|RETURN|EVENTS|INTO|OUTPUT|EXPIRED|CURRENT|SNAPSHOT|FOR|RAW|OF|AS|OR|AND|ON|IS|NOT|WITHIN|WITH|BEGIN|END|NULL|EVERY|LAST|ALL|FIRST|JOIN|INNER|OUTER|RIGHT|LEFT|FULL|UNIDIRECTIONAL|YEARS|YEAR|MONTHS|MONTH|WEEKS|WEEK|DAYS|DAY|HOURS|HOUR|MINUTES|MIN|MINUTE|SECONDS|SECOND|SEC|MILLISECONDS|MILLISECOND"
         );
 
         var builtinConstants = (
@@ -15,42 +15,56 @@ ace.define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/
         );
 
         var builtinFunctions = (
-            "count|min|max|avg|sum"
+            "coalesce|convert|instanceOfBoolean|instanceOfDouble|instanceOfFloat|instanceOfInteger|instanceOfLong|instanceOfString|UUID"
         );
-
+//#05a
         var keywordMapper = this.createKeywordMapper({
             "support.function": builtinFunctions,
             "keyword": keywords,
             "constant.language": builtinConstants,
             "support.type":("int|string|bool|float|double|object"),
-            "constant.language.boolean": "true|false"
+            "constant.language.boolean": "true|false",
+            "aggregate.function": "count|min|max|avg|sum",
+            "window.function": "time|timeBatch|length|lengthBatch|externalTime"
         }, "identifier", true);
 
         this.$rules = {
-            "start" : [ {
-                token : "comment",
-                regex : "--.*$"
-            },  {
-                token : "comment",
-                start : "/\\*",
-                end : "\\*/"
-            }, {
-                token : "string",           // " string
-                regex : '".*?"'
-            }, {
-                token : "string",           // ' string
-                regex : "'.*?'"
-            }, {
-                token : "constant.numeric", // float
-                regex : "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
-            }, {
-                token : keywordMapper,
-                regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
-            }, {
-                token : "keyword.operator",
-                regex : "\\+|\\-|\\/|\\/\\/|%|<@>|@>|<@|&|\\^|~|<|>|<=|=>|==|!=|<>|=|->|@|#|\\?|\\[|\\]|\\(|\\)|\\?|:|;|,|\\."
+            "start" : [
+                {
+                    token : "annotation.plan",
+                    regex : "@Plan\\:\\w+"
 
-            },
+                },
+                {
+                    token : "annotation.common",
+                    regex : "@\\w+"
+
+                },
+                {
+                    token : "comment.line",
+                    regex : "--.*$"
+                },  {
+                    token : "comment.block",
+                    start : "/\\*",
+                    end : "\\*/"
+                }, {
+                    token : "string.quoted.double",           // " string
+                    regex : '".*?"'
+                }, {
+                    token : "string.quoted.single",           // ' string
+                    regex : "'.*?'"
+                }, {
+                    token : "constant.numeric", // float
+                    regex : "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
+                }, {
+                    token : keywordMapper,
+                    regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
+                }, {
+                    token : "keyword.operator",
+                    regex : "\\+|\\-|\\/|\\/\\/|%|<@>|@>|<@|&|\\^|~|<|>|<=|=>|==|!=|<>|=|->|@|#|\\?|\\[|\\]|\\(|\\)|\\?|:|;|,|\\."
+
+                },
+
                 {
                     token : "paren.lparen",
                     regex : "[\\(]"
