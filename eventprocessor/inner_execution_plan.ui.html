@@ -16,173 +16,49 @@
             left: 0;
             right: 0;
         }
+
+        .line{
+            position: absolute;
+            z-index: 4;
+            border-bottom: thin dotted #E80000;
+        }
     </style>
 </head>
 
 
 <body>
 
-<pre id="editor"></pre>
 
 
-
-
-
-<script src="js/ace_editor/ace.js"></script>
-<script src="js/ace_editor/ext-language_tools.js"></script>
-<script src="js/jquery.min.js"></script>
+<script src="../eventprocessor/js/jquery.min.js"></script>
 <script src="js/prototype.js"></script>
+
+
+
+<script src="../eventprocessor/js/ace_editor/ace.js"></script>
+<script src="../eventprocessor/js/ace_editor/ext-language_tools.js"></script>
+
+
+<!--<script src="../eventprocessor/js/ace_editor/ext-language_tools.js"></script>-->
 <script src='../eventprocessor/js/client_side_Siddhi_parser/lib/require.js'></script>
-<script src="js/completion-engine.js"></script>
-
-<script>
-
-    var antlr4 = require('../eventprocessor/js/client_side_Siddhi_parser/antlr4/index');
-    var SiddhiQLGrammarLexer=require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLLexer');
-    var SiddhiQLGrammarParser=require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLParser');
-    var KeyPrinter=require('../eventprocessor/js/client_side_Siddhi_parser/gen/KeyPrinter');
-    var langTools = ace.require("ace/ext/language_tools");
-    var Range = ace.require("ace/range").Range
-
-</script>
-
-
-
-<!-- load ace -->
-
-<script>
-
-    editor = ace.edit("editor");
-    window.queryEditor=editor;
-    editor.save=function (){
-        console.log("Saved");
-    }
-    editor.session.setMode("ace/mode/siddhi");
-    editor.setTheme("ace/theme/tomorrow");
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: true
-    });
-    editor.getSession().setUseWrapMode(true);
-    editor.getSession().setTabSize(4);
-    editor.getSession().setUseSoftTabs(true);
-    editor.setShowFoldWidgets(true);
-    editor.setBehavioursEnabled(true);
-    editor.setHighlightSelectedWord(true);
-    editor.setHighlightActiveLine(true);
-    editor.setDisplayIndentGuides(true);
-    editor.setShowPrintMargin(false);
-    document.getElementById('editor').style.fontSize='18px';
-
-
-
-    langTools.addCompleter(completionEngine.SiddhiCompleter);
-
-
-
-    lastEdit=0;
-    var myVar =0
-
-
-
-    var lastErrors=1;
-    window.syntaxErrorList=[];
-    window.semanticErrorList=[];
-    var previousParserTree="";
-
-
-    editor.getSession().on('change', function(e) {
-
-        var position=editor.getCursorPosition();
-        if(e.data.text=="\n"){
-//            console.log(editor.getCursorPosition());
-
-            for(var index=0;index<semanticErrorList.length;index++){
-                if(semanticErrorList[index].row>position.row ||( semanticErrorList[index].row==position.row && position.column==0)){
-                    semanticErrorList[index].row++;
-                }
-            }
-        };
-
-        //      console.log(e.data.text=="\b")
-        if(e.data.action=="removeLines"){
-            for(var index=0;index<semanticErrorList.length;index++){
-                if(semanticErrorList[index].row>position.row ||( semanticErrorList[index].row==position.row && position.column==0)){
-                    semanticErrorList[index].row--;
-                }
-            }
-        };
-
-        if(window.syntaxErrorList.length>0) {
-            //   editor.session.clearAnnotations();
-            window.syntaxErrorList.splice(0,window.syntaxErrorList.length);
-        }
-
-
-
-        var expression=editor.getValue();
-        var  txt=new antlr4.InputStream(expression)
-        var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);
-        var tokens = new  antlr4.CommonTokenStream(lexer);
-        var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);
-        parser.buildParseTrees = true;
-        var tree = parser.parse();
-
-
-        editor.session.setAnnotations(combine(syntaxErrorList,semanticErrorList));
-
-
-
-        window.EditorTable=[];
-        var printer = new KeyPrinter.KeyPrinter();
-        antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
-        for(index=0;index<EditorTable.length;index++)
-        {
-            console.log("Statements" ,EditorTable[index]);
-        }
-
-
-        if(parser._syntaxErrors==0 && (previousParserTree!=tree.toStringTree(tree,parser)))
-        {
-            mycheck();
-
-        }
-
-        previousParserTree=tree.toStringTree(tree,parser);
-        lastErrors=parser._syntaxErrors;
-
-        lastEdit=Date.now();
-   });
-
-
-
-    function mycheck(){
-        clearInterval(myVar);
-        myVar= setInterval(function(){ check()}, 3000);
-    }
-    var check = function(){
-
-        if(Date.now()-lastEdit>=3000) {
-            var isValid=validateQueries3(editor.getValue(),true);
-            console.log("checked value"+isValid);
-            if(!isValid) {
-                var query = "";
-                for (var i = 0; i < window.EditorTable.length; i++) {
-                    query += window.EditorTable[i].state + "  \n";
-                    validateQueries3(query, false, window.EditorTable[i].line, window.EditorTable[i].state);
-                }
-            }
-
-        }
-
-        clearInterval(myVar);
-    }
-
-
-</script>
-
 <script src="../eventprocessor/js/create_execution_plan_helper.js"></script>
+<script src="../eventprocessor/js/editor.js"></script>
+<script src="../eventprocessor/js/completion-engine.js"></script>
+<pre id="editor">/* Enter a unique ExecutionPlan */
+@Plan:name('ExecutionPlan')
 
+/* Enter a unique description for ExecutionPlan */
+-- @Plan:description('ExecutionPlan')
+
+/* define streams/tables and write queries here ... */
+</pre>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        SiddhiEditor.init();
+    });
+</script>
+<!--<script src="./show_own_source.js"></script>-->
 </body>
 </html>

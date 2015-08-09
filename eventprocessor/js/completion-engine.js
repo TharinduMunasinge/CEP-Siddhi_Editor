@@ -4,7 +4,6 @@
 (function () {
 
     var completionEngine = window.completionEngine || {};
-
     window.completionEngine = completionEngine;
     completionEngine.streamList=new StreamList();
     completionEngine.tableList=new TableList();
@@ -752,7 +751,6 @@
     completionEngine.STREAM= Stream;
     completionEngine.TABLE= Table;
 
-
     completionEngine.SiddhiCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
 
@@ -786,7 +784,7 @@
         // pos.column++;
 
         //console.log(langTools.snippetCompleter);
-        var text=  editor.session.doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+        var text=  editor.session.doc.getTextRange(SiddhiEditor.Range.fromPoints({row: 0, column:0}, pos));
         var tempStatements=text.split(";");
         text=tempStatements[tempStatements.length-1]
         completionEngine.eventStore={};

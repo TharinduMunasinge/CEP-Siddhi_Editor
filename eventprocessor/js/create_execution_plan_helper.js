@@ -64,12 +64,12 @@ function validateQueries2(executionPlan,line) {
                 return;
             } else {
 
-                window.semanticErrorList.splice(0,window.semanticErrorList.length);
+                SiddhiEditor.semanticErrorList.splice(0,SiddhiEditor.semanticErrorList.length);
 
-                window.semanticErrorList.push({row:line , text:resultText,type:"error"});
+                SiddhiEditor.semanticErrorList.push({row:line , text:resultText,type:"error"});
 
-                window.editor.session.setAnnotations(window.semanticErrorList);
-                console.log(window.editor.session.getAnnotations());
+                SiddhiEditor.editor.session.setAnnotations(SiddhiEditor.semanticErrorList);
+
 
                 return;
             }
@@ -95,10 +95,10 @@ function validateQueries3(executionPlan,errorCheck,line,checkingQuery) {
             }
         ).responseText;
 
-        window.semanticErrorList.splice(0, window.semanticErrorList.length);
+        SiddhiEditor.semanticErrorList.splice(0, SiddhiEditor.semanticErrorList.length);
         responseText = responseText.trim();
         if (responseText === "success") {
-            window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+            SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
             return true;
         }else
             return false;
@@ -111,21 +111,21 @@ function validateQueries3(executionPlan,errorCheck,line,checkingQuery) {
                 data: {executionPlan: executionPlan},
                 success: function (resultText) {
                     resultText = resultText.trim();
-                    window.semanticErrorList.splice(0, window.semanticErrorList.length);
+                    SiddhiEditor.semanticErrorList.splice(0, SiddhiEditor.semanticErrorList.length);
                     if (resultText == "success") {
-                        window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+                        SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
                         console.log("Queries are valid!");
                         return;
                     } else {
 
-                        window.semanticErrorList.push({
+                        SiddhiEditor.semanticErrorList.push({
                             row: line - 1,
                             text: resultText,
                             type: "error",
                             inputText: checkingQuery
                         });
 
-                        window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+                        SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
 
                         return;
                     }

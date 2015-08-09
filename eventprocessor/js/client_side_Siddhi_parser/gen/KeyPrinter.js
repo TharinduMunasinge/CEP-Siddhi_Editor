@@ -13,7 +13,7 @@ KeyPrinter.prototype = Object.create(SiddhiQLGrammarListener.prototype);
 KeyPrinter.prototype.constructor = KeyPrinter;
 
 KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
-    var tempStrem =new completionEngine.STREAM();
+    var tempStrem =new window.completionEngine.STREAM();
     tempStrem.setStreamFromDefineStatement(ctx);
     completionEngine.streamList.addStream(tempStrem);
 
@@ -21,8 +21,8 @@ KeyPrinter.prototype.exitDefinition_stream = function(ctx) {
 };
 
 function updateTable(ctx,seperator){
-    window.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop)+seperator,line:ctx.start.line});
-    console.log(window.EditorTable);
+    SiddhiEditor.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop)+seperator,line:ctx.start.line});
+
 }
 
 
