@@ -865,9 +865,6 @@
 
 
 
-
-
-
     completionEngine.$initialList=function(){
         var intialArray=["define","from","partition","@"];
         return makeCompletions(intialArray)
@@ -1221,138 +1218,126 @@
      *
      */
 
+    var queryActions="insert|delete|update";
+    var querySelection="select";
+    var queryOutput="output";
+    var groupBY="(group\\s+by)";
+    var having="having";
+    var queryInput="((?!("+querySelection+"|"+queryOutput+"|"+queryActions+"|"+having+"|"+groupBY+")).)*";
+    var querySection="((?!("+queryOutput+"|"+queryActions+")).)*";
+    var outputRate="((?!(every|"+queryActions+")).)*";
+    var outputRateEvery="((?!("+queryActions+")).)*";
+
+
     var ruleBase=[
         {
-            regex: "from(.)+((?!select).)*#window\\.$",
+            regex: "from"+queryInput+"#window\\.$", //ok
             next: "completionEngine.$windowPhrase"
         }
         ,
         {
-            regex: "from(.)+((?!select).)*#(.)+:$",
+            regex: "from"+queryInput+"#(.)+:$", //ok
             next: "completionEngine.$nameSpacePhrase"
         },
         {
-            regex: "(\\w+)\\:$",
+            regex: "(\\w+)\\:$", //ok
             next: "completionEngine.$nameSpacePhrase"
         }
         ,
         {
-            regex:"(\\w+)\\[\\s*(\\d+|last|last-\\d+)\\s*\\]\\.$",
+            regex:"(\\w+)\\[\\s*(\\d+|last|last-\\d+)\\s*\\]\\.$", //ok
             next:"completionEngine.$eventReferenceHandler"
         }
         ,
         {
-            regex:"(\\w+)\\.$",
+            regex:"(\\w+)\\.$",  //ok
             next:"completionEngine.$resolveVariable"
         }
 
         ,
         {
-            regex: "from(.)+((?!select).)*#\\w*$",
+            regex: "from"+queryInput+"#\\w*$", //ok
             next: "completionEngine.$processorPhrase"
         }
 
         ,
-        {
-            regex:"from(.)*window(.)*select(.)*insert\\s+((?!(into|;)).)*$",
-            next:["all events  ","expired events  ","into"]
-        },
+
 
         {
-            regex:"insert\\s+((?!(into|;)).)*$",
-            next :["into","all","events","expired"]
+            regex:"insert\\s+((?!(into|;)).)*$",  //ok
+            next :["into","all","current","events","expired"]
         },
 
 
         {
-            regex:"define\\s*((?!(stream|table|function)).)*$",
+            regex:"define\\s*((?!(stream|table|function)).)*$", //ok
             next: ["stream","table","function"]
         }
         ,
         {
-            regex:"define\\s+function\\s+"+identifer+"\\s+$",
+            regex:"define\\s+function\\s+"+identifer+"\\s+$", //ok
             next: [" [language_name] "]
         }
         ,
 
         {
-            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+$",
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+$", //ok
             next: ["return"]
         },
         {
-            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+$",
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+$", //ok
             next: completionEngine.dataTypes
         }
         ,
         {
-            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+"+oneDataType+"\\s+$",
+            regex:"define\\s+function\\s+"+identifer+"\\s+\\[\\s*\\w+\\s*\\]\\s+return\\s+"+oneDataType+"\\s+$", //ok
             next: ["{ \"Function Body\"  }"]
         }
         ,
         {
-            regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$",
+            regex:"define\\s+(stream|table)\\s+"+identifer+"\\s*[(](\\s*"+identifer+"\\s+\\w+\\s*[,])*\\s*"+identifer+"\\s+((?!(int|string|float|object|time|bool|[,]|;))"+anyChar+")*$", //ok
             next: completionEngine.dataTypes
         }
         ,
 
 
         {
-            regex:"from(.)*\\[((?!\\]).)*$",
+            regex:"from(.)*\\[((?!\\]).)*$", //ok
             next:"completionEngine.$filterPhrase"
         },
 
         {
-            dfa:"completionEngine._checkNestedSquareBracketInFROMPhrase",
+            dfa:"completionEngine._checkNestedSquareBracketInFROMPhrase", //ok
             next:"completionEngine.$filterPhrase"
         },
 
         {
-            regex:"from\\s+((?!select).)*$",    //join ,on
+            regex:"from\\s+"+queryInput+"$",   //ok //join ,on
             next : "completionEngine.$fromPhraseStreamIdList"
         },
         {
-            regex:"from(.)*select\\s+((?!insert).)*$",
+            regex:"from(.)*select\\s+"+querySection+"$", //ok
             next:"completionEngine.$selectPhraseAttributesList"
         },
 
-        {
-            regex:"from(.)*window(.)*select(.)*\\s+((?!insert).)*$",
-            next:["group by","having"] //aggregate functions + attributes list
-        }
 
-        ,
-        {
-            regex:"from(.)*window(.)*select(.)*group\\s+by\\s+(.)*((?!insert).)*$",
-            next:["having","insert"] //aggregate functions + attributes list
-        }
-
-        ,
-        {
-            regex:"from(.)*window(.)*select(.)*having(.)*((?!insert).)*$",
-            next:["having","insert"] //aggregate functions + attributes list
-        }
-        ,
 
 
         {
-            regex:"@(p(l(a(n?)?)?)?)((?![)]).)*$",
+            regex:"@(p(l(a(n?)?)?)?)((?![)]).)*$", //ok
             next:['Plan:name(\'Name of the plan\')', 'Plan:description(\'Description of the plan\')', 'Plan:trace(\'true|false\')', 'Plan:statistics(\'true|false\')', 'Import(\'StreamName\')', 'Export(\'StreamName\')']
         }
         ,
         {
-            regex:"@\\w*((?![)]).)*$",
+            regex:"@\\w*((?![)]).)*$", //ok
             next:['Config(async=true)','info(name=\'stream_id\')','Plan:name(\'Name of the plan\')', 'Plan:description(\'Description of the plan\')', 'Plan:trace(\'true|false\')', 'Plan:statistics(\'true|false\')', 'Import(\'StreamName\')', 'Export(\'StreamName\')']
         },
 
-        {
-            regex:"\\w+((?!(define|from|partition)).)*$",
-            next:"completionEngine.$initialList"
-        }
-        ,
+
 
 
         {
-            regex:"\\0*$",
+            regex:"\\0$",
             next:"completionEngine.$initialList"
         }
 
