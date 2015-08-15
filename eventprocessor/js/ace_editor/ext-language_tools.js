@@ -1623,6 +1623,9 @@ Autocomplete.startCommand = {
     exec: function(editor) {
         if (!editor.completer)
             editor.completer = new Autocomplete();
+
+        completionEngine.adjustCompleters(editor);//THIS is essential to change the completer based on the context
+
         editor.completer.autoInsert = false;
         editor.completer.autoSelect = true;
         editor.completer.showPopup(editor);
