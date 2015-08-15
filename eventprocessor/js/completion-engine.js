@@ -1320,7 +1320,15 @@
             next:"completionEngine.$selectPhraseAttributesList"
         },
 
+        {
+            regex:"from(.)*output\\s+"+outputRate+"$",             //insert, delete , update
+            next:["snapshot","all","last","first","every"]
+        },
 
+        {
+            regex:"from(.)*output.*every"+outputRateEvery+"$",             //insert, delete , update
+            next:["events","min","hours","weeks","days","months","years" , "insert","delete","update"]
+        },
 
 
         {
