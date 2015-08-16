@@ -984,6 +984,45 @@
         return makeCompletions(defaultArray);
     }
 
+
+    completionEngine.$allAttributeList=function(args){
+        var tempList=[];
+        var streamList=completionEngine.streamList.getStreamIDList();
+
+        for(var s=0; s<streamList.length;s++)
+        {
+
+            var attributeList=completionEngine.streamList.getAttributeList(streamList[s])
+            tempList=tempList.concat(makeCompletions(attributeList,s));
+        }
+
+
+        return tempList;
+    }
+    completionEngine.$partitionStreamList=function(args){
+        var tempList=[];
+        var regx= "("+identifer+")\\s+of\\s+\\w*$";
+        var identifier=(new RegExp(regx)).exec(args[0]);
+
+        var streamList=completionEngine.streamList.getStreamIDList();
+        for(var i=0;i<streamList.length;i++)
+        {
+            var attributeList=completionEngine.streamList.getAttributeList(streamList[i])
+            for(var index=0;index<attributeList.length;index++)
+            {
+                if(attributeList[index]==identifier[1])
+                {
+                    tempList.push(streamList[i])
+                    break;
+                }
+            }
+        }
+
+
+        return makeCompletions(tempList);
+    }
+
+
     completionEngine.$filterPhrase=function(args){
         var fromRegxp=/from((?:.(?!from))+)$/i
         var result=fromRegxp.exec(args[0]);
@@ -1268,7 +1307,26 @@
             next :["into","all","current","events","expired"]
         },
 
+        {
 
+            regex:"partition\\s+$",
+            next :["with"]
+
+        }
+        ,
+        {
+            regex:"partition\\s+with\\s+[(](\\s*"+identifer+"\\s+of\\s+"+identifer+"\\s*[,])*\\s*$",
+            next: "completionEngine.$allAttributeList"
+        }
+        ,
+        {
+            regex:"partition\\s+with\\s+[(](\\s*"+identifer+"\\s+of\\s+"+identifer+"\\s*[,])*\\s*"+identifer+"\\s+$",
+            next: ["of"]
+        },
+        {
+            regex:"partition\\s+with\\s+[(](\\s*"+identifer+"\\s+of\\s+"+identifer+"\\s*[,])*\\s*"+identifer+"\\s+of\\s+$",
+            next: "completionEngine.$partitionStreamList"
+        },
         {
             regex:"define\\s*((?!(stream|table|function)).)*$", //ok
             next: ["stream","table","function"]
