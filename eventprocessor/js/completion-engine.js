@@ -1229,6 +1229,98 @@
         }
 
     }
+    completionEngine.$selectPhraseGroupBy=function(args){
+        var keywords=["output","having","insert","delete","update"];
+        var result=args[1].exec(args[0]);
+        var regx= /from(.*)group/i;
+
+        var fromPhrase=regx.exec(result[0]);
+
+        console.log(fromPhrase);
+
+        //
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var list=[];
+        var templist=[];
+
+        list=list.concat(makeCompletions(keywords,1));
+
+        for(var index=0;index<streamNames.length;index++)
+        {
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
+
+            if(fromPhrase[1].match(regex))
+            {
+
+
+                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
+
+            }
+
+
+        }
+
+        streamNames=streamNames.map(function(d){
+            return d+".";
+        })
+
+        list=list.concat(makeCompletions(streamNames),2)
+        list=list.concat(makeCompletions(templist,3));
+
+        return list;
+    }
+    completionEngine.$selectPhraseHaving=function(args){
+        var keywords=["output","insert","delete","update"];
+        keywords=keywords.concat(completionEngine.logicalOperatorList);
+
+        var result=args[1].exec(args[0]);
+        var regx= /from(.*)having/i;
+
+        var fromPhrase=regx.exec(result[0]);
+
+        console.log(fromPhrase);
+
+        //
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var list=[];
+        var templist=[];
+
+
+
+        for(var index=0;index<streamNames.length;index++)
+        {
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
+
+            if(fromPhrase[1].match(regex))
+            {
+
+
+                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
+
+            }
+
+
+        }
+
+        streamNames=streamNames.map(function(d){
+            return d+".";
+        })
+
+        var namespaces=getExtensionNamesSpaces();
+        namespaces=namespaces.map(function(d){return d+":"})
+
+        var sysFunctions=getSystemFunctemtionNames();
+        sysFunctions=sysFunctions.map(function(d){return d+"(args)"})
+
+        list=list.concat(makeCompletions(keywords,4));
+        list=list.concat(makeCompletions(namespaces,2));
+        list=list.concat(makeCompletions(sysFunctions,1));
+        list=list.concat(makeCompletions(streamNames),3)
+        list=list.concat(makeCompletions(templist,5));
+
+        return list;
+    }
+
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
     var anyChar= "(.|\\n)";
@@ -1364,6 +1456,14 @@
             next:"completionEngine.$filterPhrase"
         },
 
+        {
+            regex:"from.*(select)?.*"+groupBY+"?.*having"+querySection+"$", //output | insert | delete | update is possible
+            next:"completionEngine.$selectPhraseHaving"
+        },
+        {
+            regex:"from.*(select)?.*"+groupBY+"\\s+"+querySection+"$", // having | output | insert| delete | update is possible
+            next:"completionEngine.$selectPhraseGroupBy"
+        },
         {
             dfa:"completionEngine._checkNestedSquareBracketInFROMPhrase", //ok
             next:"completionEngine.$filterPhrase"
