@@ -870,25 +870,46 @@
         return makeCompletions(intialArray)
     }
 
-    completionEngine.$fromPhraseStreamIdList=function(){
-        var essentialKeyWords=["outer","left","into","all","events","expired","insert","select","as","join","on","every"]
+    completionEngine.$fromPhraseStreamIdList=function(args){
 
-        var temp=completionEngine.streamList.getStreamIDList();
+        var tempList=[];
+        var essentialKeyWords=["output","outer","inner","left","unidirectional","all","events","insert","delete","update","select","as","join","on","every","group by","having","within"]
 
-        temp=makeCompletions(temp,2);
-        essentialKeyWords=makeCompletions(essentialKeyWords,1);
-        essentialKeyWords=essentialKeyWords.concat(temp);
-        return essentialKeyWords;
+        var streams=completionEngine.streamList.getStreamIDList();
+
+        completionEngine.$eventReference(args[0]);
+        var refList=getEventReferences();
+        refList=refList.map(function(d){return d+"."});
+
+
+        completionEngine.$streamAlias(args[0]);
+        var aliasList=getStreamAliasList();
+        aliasList=aliasList.map(function(d){return d+"."});
+
+
+
+        essentialKeyWords=makeCompletions(essentialKeyWords,2);
+        aliasList=makeCompletions(aliasList,5);
+        streams=makeCompletions(streams,3);
+        refList=makeCompletions(refList,4);
+
+
+        tempList=tempList.concat(essentialKeyWords);
+        tempList=tempList.concat(aliasList);
+        tempList=tempList.concat(streams);
+        tempList=tempList.concat(refList);
+
+        return tempList;
     }
 
     completionEngine.$selectPhraseAttributesList=function(args){
 //Stream Alias yet to be handled , both in 'stream as e' form and "e1=stream"
-        var keyWords=["as", "insert","group by" , "having"]
+        var keyWords=["as", "insert","group by" , "having","output","update","delete"]
         keyWords=makeCompletions(keyWords,1);
 
 
         var sysFunctions=getSystemFunctemtionNames()
-        sysFunctions=sysFunctions=sysFunctions.map(function(d){
+        sysFunctions=sysFunctions.map(function(d){
             return d+"(args)";
         })
 
@@ -908,6 +929,13 @@
         streamIds=makeCompletions(streamIds,4);
 
 
+
+
+        var tableList=completionEngine.tableList.getTableIDList();
+        tableList=tableList.map(function(d){
+            return d+".";
+        })
+        tableList=makeCompletions(tableList,8)
 
 
         var result=args[1].exec(args[0]);
@@ -932,11 +960,12 @@
         var list=[];
         for(var index=0;index<streamNames.length;index++)
         {
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
 
-            if(fromPhrase[1].indexOf(streamNames[index])>=0)
+            if(fromPhrase[1].match(regex))
             {
                 tempList=completionEngine.streamList.getAttributeList(streamNames[index])
-                console.log(tempList)
+                console.log(tempList,streamNames[index],fromPhrase[1])
                 list=list.concat(tempList);
 
                 console.log(list);
@@ -949,6 +978,7 @@
         list=makeCompletions(list,5)
         tempList=(keyWords.concat(ns));
         tempList=tempList.concat(streamIds);
+        tempList=tempList.concat(tableList);
         tempList=tempList.concat(refList);
         tempList=tempList.concat(aliasList);
         tempList=tempList.concat(sysFunctions);
@@ -1091,6 +1121,101 @@
 
         return tempList;
     }
+
+
+    completionEngine.$selectPhraseGroupBy=function(args){
+        var keywords=["output","having","insert","delete","update"];
+        var result=args[1].exec(args[0]);
+        var regx= /from(.*)group/i;
+
+        var fromPhrase=regx.exec(result[0]);
+
+        console.log(fromPhrase);
+
+        //
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var list=[];
+        var templist=[];
+
+        list=list.concat(makeCompletions(keywords,1));
+
+        for(var index=0;index<streamNames.length;index++)
+        {
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
+
+            if(fromPhrase[1].match(regex))
+            {
+
+
+                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
+
+            }
+
+
+        }
+
+        streamNames=streamNames.map(function(d){
+            return d+".";
+        })
+
+        list=list.concat(makeCompletions(streamNames),2)
+        list=list.concat(makeCompletions(templist,3));
+
+        return list;
+    }
+    completionEngine.$selectPhraseHaving=function(args){
+        var keywords=["output","insert","delete","update"];
+        keywords=keywords.concat(completionEngine.logicalOperatorList);
+
+        var result=args[1].exec(args[0]);
+        var regx= /from(.*)having/i;
+
+        var fromPhrase=regx.exec(result[0]);
+
+        console.log(fromPhrase);
+
+        //
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var list=[];
+        var templist=[];
+
+
+
+        for(var index=0;index<streamNames.length;index++)
+        {
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
+
+            if(fromPhrase[1].match(regex))
+            {
+
+
+                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
+
+            }
+
+
+        }
+
+        streamNames=streamNames.map(function(d){
+            return d+".";
+        })
+
+        var namespaces=getExtensionNamesSpaces();
+        namespaces=namespaces.map(function(d){return d+":"})
+
+        var sysFunctions=getSystemFunctemtionNames();
+        sysFunctions=sysFunctions.map(function(d){return d+"(args)"})
+
+        list=list.concat(makeCompletions(keywords,4));
+        list=list.concat(makeCompletions(namespaces,2));
+        list=list.concat(makeCompletions(sysFunctions,1));
+        list=list.concat(makeCompletions(streamNames),3)
+        list=list.concat(makeCompletions(templist,5));
+
+        return list;
+    }
+
+
 
 
     completionEngine.$filterPhrase=function(args){
@@ -1298,97 +1423,7 @@
         }
 
     }
-    completionEngine.$selectPhraseGroupBy=function(args){
-        var keywords=["output","having","insert","delete","update"];
-        var result=args[1].exec(args[0]);
-        var regx= /from(.*)group/i;
 
-        var fromPhrase=regx.exec(result[0]);
-
-        console.log(fromPhrase);
-
-        //
-        var streamNames=completionEngine.streamList.getStreamIDList();
-        var list=[];
-        var templist=[];
-
-        list=list.concat(makeCompletions(keywords,1));
-
-        for(var index=0;index<streamNames.length;index++)
-        {
-            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
-
-            if(fromPhrase[1].match(regex))
-            {
-
-
-                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
-
-            }
-
-
-        }
-
-        streamNames=streamNames.map(function(d){
-            return d+".";
-        })
-
-        list=list.concat(makeCompletions(streamNames),2)
-        list=list.concat(makeCompletions(templist,3));
-
-        return list;
-    }
-    completionEngine.$selectPhraseHaving=function(args){
-        var keywords=["output","insert","delete","update"];
-        keywords=keywords.concat(completionEngine.logicalOperatorList);
-
-        var result=args[1].exec(args[0]);
-        var regx= /from(.*)having/i;
-
-        var fromPhrase=regx.exec(result[0]);
-
-        console.log(fromPhrase);
-
-        //
-        var streamNames=completionEngine.streamList.getStreamIDList();
-        var list=[];
-        var templist=[];
-
-
-
-        for(var index=0;index<streamNames.length;index++)
-        {
-            var regex=new RegExp("[^a-zA-Z]"+streamNames[index]+"[^a-zA-Z0-9]");
-
-            if(fromPhrase[1].match(regex))
-            {
-
-
-                templist=templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
-
-            }
-
-
-        }
-
-        streamNames=streamNames.map(function(d){
-            return d+".";
-        })
-
-        var namespaces=getExtensionNamesSpaces();
-        namespaces=namespaces.map(function(d){return d+":"})
-
-        var sysFunctions=getSystemFunctemtionNames();
-        sysFunctions=sysFunctions.map(function(d){return d+"(args)"})
-
-        list=list.concat(makeCompletions(keywords,4));
-        list=list.concat(makeCompletions(namespaces,2));
-        list=list.concat(makeCompletions(sysFunctions,1));
-        list=list.concat(makeCompletions(streamNames),3)
-        list=list.concat(makeCompletions(templist,5));
-
-        return list;
-    }
 
 
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
