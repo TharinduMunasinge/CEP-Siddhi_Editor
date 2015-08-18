@@ -1021,6 +1021,76 @@
 
         return makeCompletions(tempList);
     }
+    completionEngine.$TableSuggestions=function(args){
+        return makeCompletions(completionEngine.tableList.getTableIDList());
+
+    }
+    completionEngine.$UDPhrase=function(args){
+        var tempList=["for","on"];
+        tempList=makeCompletions(tempList,1);
+
+        var tableList= completionEngine.tableList.getTableIDList();
+        tempList=tempList.concat(makeCompletions(tableList,2));
+        return tempList;
+    }
+    completionEngine.$UDConditionPhrase=function(args)
+    {
+        var keywords=["IS NULL","NOT","AND","OR"];
+
+        var result=args[1].exec(args[0]);
+        var streamNames=completionEngine.streamList.getStreamIDList();
+        var tableNames=completionEngine.tableList.getTableIDList();
+
+        var fromPhrase= /from(.*)(update|delete)/i.exec(result[0]);
+        var streamList=[];
+        var attributeList=[];
+        for(var i=0;i<streamNames.length;i++){
+            var regex=new RegExp("[^a-zA-Z]"+streamNames[i]+"[^a-zA-Z0-9]");
+
+            if(fromPhrase[1].match(regex))
+            {                streamList.push(streamNames[i]);
+                attributeList=attributeList.concat(completionEngine.streamList.getAttributeList(streamNames[i]))
+            }
+        }
+
+
+
+        var tempList=[];
+
+        streamList=streamList.map(function(d){
+            return d+"."
+        })
+
+
+        var UDphrase= /(update|delete)(.*)on/i.exec(result[0]);
+
+
+        var tableList=[];
+        for(var i=0;i<tableNames.length;i++){
+
+            var regex=new RegExp("[^a-zA-Z]"+tableNames[i]+"[^a-zA-Z0-9]");
+
+            if(UDphrase[2].match(regex))
+            //
+            //if( UDphrase[2].indexOf(tableNames[i]))
+                tableList.push(tableNames[i]);
+        }
+
+        tableList=tableList.map(function(d){
+            return d+"."
+        })
+
+
+
+        tempList=tempList.concat(makeCompletions(tableList,4));
+        tempList=tempList.concat(makeCompletions(attributeList,3))
+
+        tempList=tempList.concat(makeCompletions(streamList,2));
+
+        tempList=tempList.concat(makeCompletions(keywords,1));
+
+        return tempList;
+    }
 
 
     completionEngine.$filterPhrase=function(args){
@@ -1079,7 +1149,6 @@
 
         return temparray;
     }
-
 
 
     completionEngine.$nameSpacePhrase=function(args){
@@ -1362,6 +1431,10 @@
 
     var ruleBase=[
         {
+            regex: "\\s+in\\s+$",
+            next: "completionEngine.$TableSuggestions"
+        },
+        {
             regex: "from"+queryInput+"#window\\.$", //ok
             next: "completionEngine.$windowPhrase"
         }
@@ -1397,6 +1470,24 @@
         {
             regex:"insert\\s+((?!(into|;)).)*$",  //ok
             next :["into","all","current","events","expired"]
+        },
+
+        {
+            regex:"insert(.)*into((?!(;)).)*$",
+            next :"completionEngine.$TableSuggestions"
+        },
+        {
+            regex:"from.*(delete|update)((?!(on|for)).)*$",
+            next :"completionEngine.$UDPhrase" //for,on,tablenames
+        },
+
+        {
+            regex:"from.*(delete|update)\\s+"+identifer+"\\s+for((?!on).)*$",
+            next : ["all","current","expired","events","on"]   //all , current, expired , events .
+        },
+        {
+            regex:"from.*(delete|update)\\s+("+identifer+").*on.*((?!;).)*$",
+            next :"completionEngine.$UDConditionPhrase"
         },
 
         {
