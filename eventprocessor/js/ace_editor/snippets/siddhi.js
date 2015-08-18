@@ -7,27 +7,29 @@ snippet defStream\n\
 snippet defTable\n\
 	define table ${1:table_name}  ( ${2:attr1} ${3:Type1},${4:attN} ${5:TypeN} );\n\
 snippet defFunction\n\
-	define function ${1:function_name} [ ${2:lang_name} ] return ${3:return_type} { \"Function_body\" };\n\
-snippet @IndexedBy\n\
-	IndexedBy('${1:attribute_name}')\n\
-snippet @From\n\
-	From(eventtable='${1:rdbms}',jdbc.url=${2:'jdbc:mysql://HOST:3306/DB}', username='${3:root}', password='${4:root}', driver.name='${5:com.mysql.jdbc.Driver}', datasource.name='${6:DATASOURCE}', table.name='${7:TABLENAME}', cache='${8:lru}', cache.size='${9:3000}')\n\
-snippet @PlanName\n\
-	Plan : name(\"${1:Plan_Name}\")\n\
-snippet @PlanDesc\n\
-	Plan : Description(\"${1:Plan_Description}\")\n\
-snippet @PlanStat\n\
-	Plan : Statistics(\"${1:Plan_Statistics}\")\n\
-snippet @PlanTrace\n\
-	Plan : Trace(\"${1:Plan_Trace}\")\n\
-snippet @Import\n\
-	Import (\"${1:Stream_ID}\")\n\
-snippet @Export\n\
-	Export (\"${1:Stream_ID}\")\n\
-snippet @Info\n\
-	info ( name = \"${1:Stream_ID}\" )\n\
-snippet @Config\n\
-	config ( async = \'true\' )\n\
+	define function ${1:function_name} [ ${2:lang_name} ] return ${3:return_type} { \n\
+	\"Function_body\" \n\
+	};\n\
+snippet annot-IndexedBy\n\
+	@IndexedBy('${1:attribute_name}')\n\
+snippet annot-From\n\
+	@From(eventtable='${1:rdbms}',jdbc.url=${2:'jdbc:mysql://HOST:3306/DB}', username='${3:root}', password='${4:root}', driver.name='${5:com.mysql.jdbc.Driver}', datasource.name='${6:DATASOURCE}', table.name='${7:TABLENAME}', cache='${8:lru}', cache.size='${9:3000}')\n\
+snippet annot-PlanName\n\
+	@Plan : name(\"${1:Plan_Name}\")\n\
+snippet annot-PlanDesc\n\
+	@Plan : Description(\"${1:Plan_Description}\")\n\
+snippet annot-PlanStat\n\
+	@Plan : Statistics(\"${1:Plan_Statistics}\")\n\
+snippet annot-PlanTrace\n\
+	@Plan : Trace(\"${1:Plan_Trace}\")\n\
+snippet annot-Import\n\
+	@Import (\"${1:Stream_ID}\")\n\
+snippet annot-Export\n\
+	@Export (\"${1:Stream_ID}\")\n\
+snippet annot-Info\n\
+	@info ( name = \"${1:Stream_ID}\" )\n\
+snippet annot-Config\n\
+	@config ( async = \'true\' )\n\
 snippet #window.\n\
 	window.${1:namespace}:${2:window_name}( ${3:args} )\n\
 snippet query-filter\n\
