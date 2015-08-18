@@ -1219,6 +1219,8 @@
 
 
     completionEngine.$filterPhrase=function(args){
+        var keyword=completionEngine.logicalOperatorList;
+
         var fromRegxp=/from((?:.(?!from))+)$/i
         var result=fromRegxp.exec(args[0]);
         console.log(result);
@@ -1254,27 +1256,28 @@
 
 
         var temparray=[];
+        temparray=temparray.concat(makeCompletions(keyword,1))
         console.log("Event LIST ",temp)
         if(completionEngine.eventStore.hasOwnProperty(temp)) {
             temparray = ["last"]
 
-            temparray= makeCompletions(temparray)
+            temparray= makeCompletions(temparray,2)
         }
         else {
 
 
             var refList=getEventReferences();
-            refList=makeCompletions(refList,1);
+            refList=makeCompletions(refList,2);
 
             var attrList=  completionEngine.streamList.getAttributeList(temp);
-            attrList=makeCompletions(attrList,2);
-            temparray = temparray.concat(refList)
+            attrList=makeCompletions(attrList,3);
+            temparray = temparray.concat(refList);
             temparray=temparray.concat(attrList);
         }
 
+
         return temparray;
     }
-
 
     completionEngine.$nameSpacePhrase=function(args){
         var result=args[1].exec(args[0]);
@@ -1323,15 +1326,19 @@
         completionEngine.$eventReference(args[0]);
         completionEngine.$streamAlias(args[0]);
 
-        if(completionEngine.eventStore.hasOwnProperty(result[1]))
-            result[1]=completionEngine.eventStore[result[1]];
+        if(completionEngine.tableList.hasTable(result[1]))
+            tempList=completionEngine.tableList.getAttributeList(result[1]);
+        else
+        {
+            if (completionEngine.eventStore.hasOwnProperty(result[1]))
+                result[1] = completionEngine.eventStore[result[1]];
 
-        if(completionEngine.streamAliasList.hasOwnProperty(result[1]))
-            result[1]=completionEngine.streamAliasList[result[1]];
+            if (completionEngine.streamAliasList.hasOwnProperty(result[1]))
+                result[1] = completionEngine.streamAliasList[result[1]];
 
-        if(completionEngine.streamList.hasStream(result[1]))
-            tempList=completionEngine.streamList.getAttributeList(result[1])
-
+            if (completionEngine.streamList.hasStream(result[1]))
+                tempList = completionEngine.streamList.getAttributeList(result[1])
+        }
         return makeCompletions(tempList,1);
     }
 
@@ -1424,34 +1431,9 @@
 
     }
 
-
-
     var identifer="[a-zA-Z_][a-zA-Z_0-9]*";
     var anyChar= "(.|\\n)";
     var oneDataType="(int|long|double|bool|object|string|time)"
-
-    /**
-     *
-     * Non select  phrases in query
-     *
-     *
-     * object resolveness=> no aditional parameters
-
-     * clear for as handling
-     *
-     * Make expression work with new lines-DONE
-     *
-     *
-     * Partition handle
-     *
-     * As handling-> Stream As Done, attribute as not done
-     *  as and sequence availabble at from level
-     * refactor as/ref logic -> to dynamically calculate the stuff.
-     * Join Handling
-     * Sequence handling
-     *
-     *
-     */
 
     var queryActions="insert|delete|update";
     var querySelection="select";
@@ -1656,71 +1638,82 @@
 
 
 
-
-    function Stream() {
+//Stream OBject Constructor
+    function Stream()
+    {
         this.id;
-        this.attributeNames = [];
-        this.attributeTypes = [];
+        this.attributeNames=[];
+        this.attributeTypes=[];
+
     }
 
-    Stream.prototype.setStreamFromDefineStatement = function (ctx) {
-        this.id = ctx.source().start.text;
-        var counter = 0;
-        var attrName;
-
-        while (attrName = ctx.attribute_name(counter)) {
+    Stream.prototype.setStreamFromDefineStatement=function(ctx)
+    {
+        this.id=ctx.source().start.text;
+        var counter=0;
+        while(attrName=ctx.attribute_name(counter)){
             this.attributeNames.push(ctx.attribute_name(counter).start.text);
             this.attributeTypes.push(ctx.attribute_type(counter).start.text);
             counter++;
         }
-
+        this.cacheContext=ctx;
     }
-    Stream.prototype.getAttributeNameList = function () {
+    Stream.prototype.getAttributeNameList=function(){
         return this.attributeNames;
     }
-    Stream.prototype.getAttribute = function (i) {
+    Stream.prototype.getAttribute=function(i){
         return this.attributeNames[i];
     }
 
 
-
     //StreamList Class
-    function StreamList() {
-        this.streamList = {};
+    function StreamList(){
+        this.streamList={};
     }
 
-    StreamList.prototype.addStream = function (streamObj) {
-        this.streamList[streamObj.id] = streamObj;
+    StreamList.prototype.addStream=function(streamObj)
+    {
+        this.streamList[streamObj.id]=streamObj;
     }
 
-    StreamList.prototype.getAttributeList = function (id) {
+    StreamList.prototype.getAttributeList=function(id)
+    {
+        if(!this.streamList[id])
+            return [];
         return this.streamList[id].getAttributeNameList();
     }
 
-    StreamList.prototype.clear = function () {
-        var array = this.getStreamIDList();
-        for (var i = 0; i < array.length; i++) {
-            delete completionEngine.streamList[array[i]];
-        }
+    StreamList.prototype.clear=function(){
+        this.streamList={};
+        //var array=this.getStreamIDList();
+        //for(var i=0;i<array.length;i++)
+        //{
+        //    delete completionEngine.streamList[array[i]];
+        //}
     }
-    StreamList.prototype.getStreamIDList = function () {
-        var temp = [];
-        for (var propertyName in this.streamList) {
-
+    StreamList.prototype.getStreamIDList=function()
+    {
+        var temp=[];
+        for(var propertyName in this.streamList) {
+            // propertyName is what you want
+            // you can get the value like this: myObject[propertyName]
             temp.push(propertyName);
         }
 
         return temp;
     }
 
-    StreamList.prototype.hasStream = function (id) {
-        var status = false;
-        this.getStreamIDList().map(function (d) {
-            if (id == d)
-                status = true;
+    StreamList.prototype.hasStream=function(id)
+    {
+        var status=false;
+        this.getStreamIDList().map(function(d){
+            if(id==d)
+                status=true;
         })
         return status;
     }
+
+
 
 
 
@@ -1752,12 +1745,20 @@
     }
 
 
+    function Function()
+    {
+        this.id;
+        this.lang;
+        this.returnType;
+        this.code;
+    }
 
     Table.prototype.setTableFromDefineStatement=function(ctx)
     {
         this.id=ctx.source().start.text;
         var counter=0;
         var attrName;
+
         while(attrName=ctx.attribute_name(counter)){
             this.attributeNames.push(ctx.attribute_name(counter).start.text);
             this.attributeTypes.push(ctx.attribute_type(counter).start.text);
@@ -1799,16 +1800,24 @@
         return temp;
     }
 
-
-
-
-    function Function()
+    TableList.prototype.hasTable=function(id)
     {
-        this.id;
-        this.lang;
-        this.returnType;
-        this.code;
+        var status=false;
+        this.getTableIDList().map(function(d){
+            if(id==d)
+                status=true;
+        })
+        return status;
     }
+
+
+
+
+
+
+
+
+
 
 
     function FunctionList(){
