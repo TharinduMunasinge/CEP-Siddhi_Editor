@@ -10,7 +10,9 @@
     completionEngine.streamList=new StreamList();
     completionEngine.tableList=new TableList();
     completionEngine.functionList=new FunctionList();
-
+    var functions="functions";
+    var streamProcessors="streamProcessors";
+    var windowProcessors="windowProcessors"
     completionEngine.wordList=[];
     completionEngine.extensions={
         math: {
@@ -780,12 +782,29 @@
         return aliasList;
     }
 
-    function getExtensionNamesSpaces(){
+    function getExtensionNamesSpaces(objType1,objType2){
         var tempList=[];
+
         for(var propertyName in completionEngine.extensions) {
-            tempList.push(propertyName);
+            console.log(completionEngine.extensions[propertyName][objType1],objType1,propertyName)
+            console.log("RESULTS",objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]))
+            if((objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]))||(objType2 && !isEmpty(completionEngine.extensions[propertyName][objType2]))) {
+
+                    tempList.push(propertyName);
+            }
+            else if(!objType1 && !objType2)
+                tempList.push(propertyName);
         }
         return tempList;
+    }
+
+    function isEmpty(map) {
+        for(var key in map) {
+            if (map.hasOwnProperty(key)) {
+                return false;
+            }
+        }
+        return true;
     }
     function getExtensionFunctionNames(ns){
         var tempList=[];
@@ -905,7 +924,7 @@
     completionEngine.$selectPhraseAttributesList=function(args){
 //Stream Alias yet to be handled , both in 'stream as e' form and "e1=stream"
         var keyWords=["as", "insert","group by" , "having","output","update","delete"]
-        keyWords=makeCompletions(keyWords,1);
+
 
 
         var sysFunctions=getSystemFunctemtionNames()
@@ -913,20 +932,14 @@
             return d+"(args)";
         })
 
-        sysFunctions=makeCompletions(sysFunctions,2);
 
-        var ns=getExtensionNamesSpaces();
+        var ns=getExtensionNamesSpaces(functions);
         ns= ns.map(function(d){
             return d+":";
         })
-        ns=makeCompletions(ns,3);
 
-        var streamIds=completionEngine.streamList.getStreamIDList();
 
-        streamIds=streamIds.map(function(d){
-            return d+".";
-        })
-        streamIds=makeCompletions(streamIds,4);
+
 
 
 
@@ -935,7 +948,7 @@
         tableList=tableList.map(function(d){
             return d+".";
         })
-        tableList=makeCompletions(tableList,8)
+
 
 
         var result=args[1].exec(args[0]);
@@ -947,16 +960,16 @@
         completionEngine.$streamAlias(result[0]);
         var aliasList=getStreamAliasList();
         aliasList=aliasList.map(function(d){return d+"."});
-        aliasList=makeCompletions(aliasList,6);
+
 
 
         completionEngine.$eventReference(result[0]);
         var refList=getEventReferences();
         refList=refList.map(function(d){return d+"."});
-        refList=makeCompletions(refList,7);
 
 
 
+        var streamIds=[];
         var list=[];
         for(var index=0;index<streamNames.length;index++)
         {
@@ -964,8 +977,9 @@
 
             if(fromPhrase[1].match(regex))
             {
+                streamIds.push(streamNames[index]);
                 tempList=completionEngine.streamList.getAttributeList(streamNames[index])
-                console.log(tempList,streamNames[index],fromPhrase[1])
+
                 list=list.concat(tempList);
 
                 console.log(list);
@@ -974,8 +988,26 @@
 
         }
 
+
+        streamIds=streamIds.map(function(d){
+            return d+".";
+        })
+
+
+
         var tempList=[];
-        list=makeCompletions(list,5)
+
+        streamIds=makeCompletions(streamIds,5);
+        list=makeCompletions(list,8)
+        refList=makeCompletions(refList,7);
+        aliasList=makeCompletions(aliasList,6);
+        tableList=makeCompletions(tableList,4)
+        ns=makeCompletions(ns,3);
+        keyWords=makeCompletions(keyWords,1);
+        sysFunctions=makeCompletions(sysFunctions,2);
+
+
+
         tempList=(keyWords.concat(ns));
         tempList=tempList.concat(streamIds);
         tempList=tempList.concat(tableList);
@@ -991,7 +1023,7 @@
         var defaultArray=["time(1 min)","timeBatch( 1 min)","length(10)","lengthBatch(10)","externalTime(timeStamp,windowTime)"]
 
 
-        var nsArray=getExtensionNamesSpaces();
+        var nsArray=getExtensionNamesSpaces(windowProcessors);
         nsArray=nsArray.map(function(d,i){
             return d+":";
         })
@@ -1001,17 +1033,19 @@
     }
 
     completionEngine.$processorPhrase=function(args){
-        var defaultArray=["window.","transform."];
+        var defaultArray=["window."];
 
         //if built in streamProcessors exist , they should be included
 
-        var nsArray=getExtensionNamesSpaces();
+        defaultArray=makeCompletions(defaultArray,2);
+
+        var nsArray=getExtensionNamesSpaces(windowProcessors,streamProcessors);
         nsArray=nsArray.map(function(d,i){
             return d+":";
         })
 
-        defaultArray=defaultArray.concat(nsArray)
-        return makeCompletions(defaultArray);
+        defaultArray=defaultArray.concat(makeCompletions(nsArray,1))
+        return (defaultArray);
     }
 
 
@@ -1200,16 +1234,16 @@
             return d+".";
         })
 
-        var namespaces=getExtensionNamesSpaces();
+        var namespaces=getExtensionNamesSpaces(functions);
         namespaces=namespaces.map(function(d){return d+":"})
 
         var sysFunctions=getSystemFunctemtionNames();
         sysFunctions=sysFunctions.map(function(d){return d+"(args)"})
 
-        list=list.concat(makeCompletions(keywords,4));
-        list=list.concat(makeCompletions(namespaces,2));
+        list=list.concat(makeCompletions(keywords,2));
+        list=list.concat(makeCompletions(namespaces,3));
         list=list.concat(makeCompletions(sysFunctions,1));
-        list=list.concat(makeCompletions(streamNames),3)
+        list=list.concat(makeCompletions(streamNames),4)
         list=list.concat(makeCompletions(templist,5));
 
         return list;
@@ -1407,23 +1441,36 @@
         {
 
             var strId="";
-            if(tokenArray[i].indexOf('=')>0 && tokenArray[i].indexOf('==')<0) {
+            if(tokenArray[i].indexOf('=')>0 && tokenArray[i].indexOf('==')<0 && tokenArray[i].indexOf('<=')<0 && tokenArray[i].indexOf('>=')<0) {
+
 
                 var keyValue=tokenArray[i].split("=")
-                var ref=keyValue[0];
-                var value=keyValue[1];
-
-                //Check the match with stream ID
-                // for (var j = 0; j < streamIdList.length; j++) {
-                //    var tempIndex = 0;
-                //    if (tempIndex = tokenArray[i].lastIndexOf(streamIdList[j]) >= 0) {
-                //        if (tempIndex > maxIndex)
-                //            strId = streamIdList[j];
-                //    }
-                //}
+                console.log(keyValue)
+                var keyRegex=/(\w+)\s*$/i
+                var valueRegex=/^\s*(\w+)/i
 
 
-                completionEngine.eventStore[ref]=value;
+                var ref=keyRegex.exec(keyValue[0]);
+
+                var value=valueRegex.exec(keyValue[1]);
+                    if(ref && value && ref[0] && value[0]) {
+                        value = value[0].trim();
+
+                        ref = ref[0].trim();
+
+
+                        //Check the match with stream ID
+                        // for (var j = 0; j < streamIdList.length; j++) {
+                        //    var tempIndex = 0;
+                        //    if (tempIndex = tokenArray[i].lastIndexOf(streamIdList[j]) >= 0) {
+                        //        if (tempIndex > maxIndex)
+                        //            strId = streamIdList[j];
+                        //    }
+                        //}
+
+
+                        completionEngine.eventStore[ref] = value;
+                    }
             }
 
 
@@ -1500,7 +1547,7 @@
 
         {
             regex:"insert\\s+((?!(into|;)).)*$",
-            next :["into","all","current","events","expired"]
+            next :["into","events","all","current","expired"]
         },
 
 
