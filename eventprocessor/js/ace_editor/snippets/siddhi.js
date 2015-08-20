@@ -36,19 +36,19 @@ snippet query-filter\n\
 	\n\
 	from ${1:stream_name}[${2:filter_condition}]\n\
 	select ${3:attribute1} , ${4:attribute2} \n\
-	insert into ${5:output_stream}\n\
+	insert into ${5:output_stream} ;\n\
 	\n\
 snippet query-window\n\
 	\n\
 	from ${1:stream_name}#window.${2:namespace}:${3:window_name}( ${4:args} )\n\
 	select ${5:attribute1} , ${6:attribute2} \n\
-	insert into ${7:output_stream}\n\
+	insert into ${7:output_stream} ;\n\
 	\n\
 snippet query-window-filter\n\
 	\n\
 	from ${1:stream_name}[${2:filter_condition}]#window.${3:namespace}:${4:window_name}( ${5:args} )\n\
 	select ${6:attribute1} , ${7:attribute2} \n\
-	insert into ${8:output_stream}\n\
+	insert into ${8:output_stream} ;\n\
 	\n\
 snippet query-join\n\
 	\n\
@@ -57,7 +57,7 @@ snippet query-join\n\
 		on ${11:join_condition}\n\
 		within ${12: time_gap}\n\
 	select ${13:attribute1} , ${14:attribute2} \n\
-	insert into ${15:output_stream}\n\
+	insert into ${15:output_stream} ;\n\
 	\n\
 snippet query-pattern\n\
 	\n\
@@ -65,13 +65,13 @@ snippet query-pattern\n\
 		every ${3:stream_reference2}=${4:stream_name2}[${5:filter_condition2}]\n\
 		within ${6: time_gap}\n\
 	select  ${7:stream_reference}.${8:attribute1} , ${9:stream_reference}.${10:attribute1} \n\
-	insert into ${15:output_stream}\n\
+	insert into ${15:output_stream} ;\n\
 	\n\
 snippet query\n\
 	\n\
 	from ${1:stream_name}\n\
 	select ${2:attribute1} , ${3:attribute2} \n\
-	insert into ${4:output_stream}\n\
+	insert into ${4:output_stream} ;\n\
 	\n\
 snippet partition\n\
 	\n\

@@ -27,7 +27,7 @@
 
         window.queryEditor = SiddhiEditor.editor;
         editor.save = function () {
-            console.log("Saved");
+            //console.log("Saved");
         }
 
 
@@ -78,7 +78,7 @@
 
         var position = editor.getCursorPosition();
         if (e.data.text == "\n") {
-//            console.log(editor.getCursorPosition());
+//            //console.log(editor.getCursorPosition());
 
             for (var index = 0; index < SiddhiEditor.semanticErrorList.length; index++) {
                 if (SiddhiEditor.semanticErrorList[index].row > position.row || ( SiddhiEditor.semanticErrorList[index].row == position.row && position.column == 0)) {

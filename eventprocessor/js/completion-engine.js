@@ -656,9 +656,9 @@
 
             var annotation= new RegExp("@"+name+"[(]\\s*"+ annotationElement+"(\\s*[,]\\s*"+annotationElement+")*\\s*[)]\\s*\\S*$")
 
-            console.log(txt,blockCommentEnd.test(txt) )
+            //console.log(txt,blockCommentEnd.test(txt) )
             if(newStatement.test(txt)|| annotation.test(txt) || blockCommentEnd.test(txt) || lineComment.test(txt) || begin.test(txt) || spaces.test(txt) ||txt=="" || startingWord.test(txt)) {
-                console.log("SUITABE FOR NEW char");
+                //console.log("SUITABE FOR NEW char");
 
                 return true;
             }
@@ -691,7 +691,7 @@
         var pos = editor.getCursorPosition();
         // pos.column++;
 
-        //console.log(langTools.snippetCompleter);
+        ////console.log(langTools.snippetCompleter);
         var text=  editor.session.doc.getTextRange(SiddhiEditor.Range.fromPoints({row: 0, column:0}, pos));
         var tempStatements=text.split(";");
         text=tempStatements[tempStatements.length-1]
@@ -701,7 +701,7 @@
 
         text=text.replace(/\s/g," ");
 
-        console.log("input text",text);
+        //console.log("input text",text);
         completionEngine.wordList=[];
         if(completionEngine.checkTheBeginning(editor)) {
             completionEngine.wordList = completionEngine.$initialList();
@@ -710,7 +710,7 @@
 
         for(var a=0;a<ruleBase.length;a++)
         {
-            console.log(a);
+            //console.log(a);
 
 
             if(ruleBase[a].hasOwnProperty("dfa"))
@@ -729,16 +729,16 @@
             }
             else {
                 var regx = new RegExp(ruleBase[a].regex, "i");
-                //console.log(a,text,ruleBase[a],regx.test(text));
+                ////console.log(a,text,ruleBase[a],regx.test(text));
                 if (regx.test(text)) {
-                    console.log(text, ruleBase[a]);
+                    //console.log(text, ruleBase[a]);
                     if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
                         completionEngine.wordList = makeCompletions(ruleBase[a].next)
 
                     } else {
                         completionEngine.wordList = executeFunctionByName(ruleBase[a].next, window, [text, regx]);
                     }
-                    console.log(completionEngine.wordList);
+                    //console.log(completionEngine.wordList);
                     return;
                 }
             }
@@ -786,8 +786,8 @@
         var tempList=[];
 
         for(var propertyName in completionEngine.extensions) {
-            console.log(completionEngine.extensions[propertyName][objType1],objType1,propertyName)
-            console.log("RESULTS",objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]))
+            //console.log(completionEngine.extensions[propertyName][objType1],objType1,propertyName)
+            //console.log("RESULTS",objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]))
             if((objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]))||(objType2 && !isEmpty(completionEngine.extensions[propertyName][objType2]))) {
 
                     tempList.push(propertyName);
@@ -955,7 +955,7 @@
         var streamNames=completionEngine.streamList.getStreamIDList();
         var fromPhrase= /from(.*)select/i.exec(result[0]);
 
-        console.log(fromPhrase);
+        //console.log(fromPhrase);
 
         completionEngine.$streamAlias(result[0]);
         var aliasList=getStreamAliasList();
@@ -982,7 +982,7 @@
 
                 list=list.concat(tempList);
 
-                console.log(list);
+                //console.log(list);
             }
 
 
@@ -1164,7 +1164,7 @@
 
         var fromPhrase=regx.exec(result[0]);
 
-        console.log(fromPhrase);
+        //console.log(fromPhrase);
 
         //
         var streamNames=completionEngine.streamList.getStreamIDList();
@@ -1206,7 +1206,7 @@
 
         var fromPhrase=regx.exec(result[0]);
 
-        console.log(fromPhrase);
+        //console.log(fromPhrase);
 
         //
         var streamNames=completionEngine.streamList.getStreamIDList();
@@ -1257,7 +1257,7 @@
 
         var fromRegxp=/from((?:.(?!from))+)$/i
         var result=fromRegxp.exec(args[0]);
-        console.log(result);
+        //console.log(result);
         var start=-1;
         var temp="";
         var flag=true;
@@ -1291,7 +1291,7 @@
 
         var temparray=[];
         temparray=temparray.concat(makeCompletions(keyword,1))
-        console.log("Event LIST ",temp)
+        //console.log("Event LIST ",temp)
         if(completionEngine.eventStore.hasOwnProperty(temp)) {
             temparray = ["last"]
 
@@ -1355,7 +1355,7 @@
 
         var result=args[1].exec(args[0]);
         var tempList=[];
-        console.log(result);
+        //console.log(result);
 
         completionEngine.$eventReference(args[0]);
         completionEngine.$streamAlias(args[0]);
@@ -1445,7 +1445,7 @@
 
 
                 var keyValue=tokenArray[i].split("=")
-                console.log(keyValue)
+                //console.log(keyValue)
                 var keyRegex=/(\w+)\s*$/i
                 var valueRegex=/^\s*(\w+)/i
 

@@ -81,7 +81,7 @@ ConsoleErrorListener.prototype.syntaxError = function(recognizer, offendingSymbo
    // window.editor.session.setAnnotations(tem);
    //// window.errormarker=window.editor.session.addMarker(new Range(line-1,column-1,line-1,column+1),"line","fullLine");
    //
-    console.error(" Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
+    //console.error(" Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
 };
 
 function ProxyErrorListener(delegates) {

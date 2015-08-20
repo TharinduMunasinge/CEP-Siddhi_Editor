@@ -16,11 +16,11 @@ KeyPrinter.prototype.constructor = KeyPrinter;
 
 KeyPrinter.prototype.exitDefinition_function = function(ctx) {
 
-    console.log("EXIT Function",ctx);
+    //console.log("EXIT Function",ctx);
     //var tempTable =new completionEngine.TABLE();
     //tempTable.setTableFromDefineStatement(ctx);
     //completionEngine.tableList.addStream(tempTable);
-    //console.log("tempTable Defintion",tempTable);
+    ////console.log("tempTable Defintion",tempTable);
     updateTable(ctx," ;")
 };
 
@@ -46,7 +46,7 @@ KeyPrinter.prototype.exitDefinition_table = function(ctx) {
 
 function updateTable(ctx,seperator){
     SiddhiEditor.EditorTable.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop)+seperator,line:ctx.start.line});
-    console.log(SiddhiEditor.EditorTable)
+    //console.log(SiddhiEditor.EditorTable)
 }
 
 KeyPrinter.prototype.exitError = function(ctx) {
@@ -105,7 +105,7 @@ KeyPrinter.prototype.exitQuery = function(ctx) {
             if(ctx.query_input().standard_stream()) {
                 var inputStream = ctx.query_input().standard_stream().source().stream_id().name().stop.text;
                 tempStrem.attributeNames = window.completionEngine.streamList.getAttributeList(inputStream);
-                console.log("infered stream", tempStrem.attributeNames)
+                //console.log("infered stream", tempStrem.attributeNames)
             }else if(ctx.query_input().join_stream())
             {
                 var leftsource=ctx.query_input().join_stream().left_source.source().stop.text;
@@ -121,7 +121,7 @@ KeyPrinter.prototype.exitQuery = function(ctx) {
                     return rightsource+"_"+d;
                 })
                 tempStrem.attributeNames= leftStreamAttributeList.concat(rightStreamAttributeList);
-                console.log("JOINSTREAM",tempStrem)
+                //console.log("JOINSTREAM",tempStrem)
             }
         }
         for(var i=0;i<attributeList.length;i++)
