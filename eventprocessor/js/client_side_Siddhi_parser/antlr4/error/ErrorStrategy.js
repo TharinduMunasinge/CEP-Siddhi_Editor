@@ -566,6 +566,7 @@ DefaultErrorStrategy.prototype.getMissingSymbol = function(recognizer) {
 };
 
 DefaultErrorStrategy.prototype.getExpectedTokens = function(recognizer) {
+    console.log("Expected Tokens",(recognizer.getExpectedTokens()).toString(recognizer.literalNames, recognizer.symbolicNames));
     return recognizer.getExpectedTokens();
 };
 

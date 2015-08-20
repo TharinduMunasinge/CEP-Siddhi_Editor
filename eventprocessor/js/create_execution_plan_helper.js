@@ -64,12 +64,12 @@ function validateQueries2(executionPlan,line) {
                 return;
             } else {
 
-                window.semanticErrorList.splice(0,window.semanticErrorList.length);
+                SiddhiEditor.semanticErrorList.splice(0,SiddhiEditor.semanticErrorList.length);
 
-                window.semanticErrorList.push({row:line , text:resultText,type:"error"});
+                SiddhiEditor.semanticErrorList.push({row:line , text:resultText,type:"error"});
 
-                window.editor.session.setAnnotations(window.semanticErrorList);
-                console.log(window.editor.session.getAnnotations());
+                SiddhiEditor.editor.session.setAnnotations(SiddhiEditor.semanticErrorList);
+
 
                 return;
             }
@@ -77,46 +77,62 @@ function validateQueries2(executionPlan,line) {
     });
 }
 
-function validateQueries3(executionPlan,line,checkingQuery) {
+function validateQueries3(executionPlan,errorCheck,line,checkingQuery) {
 
     if (executionPlan == "") {
         console.log("Query expressions cannot be empty.");
         return;
     }
 
-    jQuery.ajax({
-            type: "POST",
-            url: "../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp",
-            async: true,
-            data: {executionPlan: executionPlan},
-            success: function (resultText) {
 
-                resultText = resultText.trim();
-                window.semanticErrorList.splice(0, window.semanticErrorList.length);
+    if(errorCheck) {
+        var responseText =jQuery.ajax({
+                type: "POST",
+                url: "../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp",
+                async:false,
+                data: {executionPlan: executionPlan}
 
-                if (resultText == "success") {
+            }
+        ).responseText;
 
-                    window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
+        SiddhiEditor.semanticErrorList.splice(0, SiddhiEditor.semanticErrorList.length);
+        responseText = responseText.trim();
+        if (responseText === "success") {
+            SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
+            return true;
+        }else
+            return false;
 
+    }else{
+        jQuery.ajax({
+                type: "POST",
+                url: "../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp",
+                async:true,
+                data: {executionPlan: executionPlan},
+                success: function (resultText) {
+                    resultText = resultText.trim();
+                    SiddhiEditor.semanticErrorList.splice(0, SiddhiEditor.semanticErrorList.length);
+                    if (resultText == "success") {
+                        SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
+                        console.log("Queries are valid!");
+                        return;
+                    } else {
 
-                    console.log("Queries are valid!");
-                    return;
-                } else {
+                        SiddhiEditor.semanticErrorList.push({
+                            row: line - 1,
+                            text: resultText,
+                            type: "error",
+                            inputText: checkingQuery
+                        });
 
-                    window.semanticErrorList.push({
-                        row: line - 1,
-                        text: resultText,
-                        type: "error",
-                        inputText: checkingQuery
-                    });
+                        SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
 
-                    window.editor.session.setAnnotations(combine(window.semanticErrorList, window.syntaxErrorList));
-
-                    return;
+                        return;
+                    }
                 }
             }
-        }
-    );
+        );
+    }
 
 }
 
