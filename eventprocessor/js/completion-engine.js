@@ -653,11 +653,12 @@
             var begin=/begin\s*\S*$/i;
             var spaces=/^\s*$/;
             var startingWord=/^\s*\S*$/i;
-
-            var annotation= new RegExp("@"+name+"[(]\\s*"+ annotationElement+"(\\s*[,]\\s*"+annotationElement+")*\\s*[)]\\s*\\S*$")
+            var annotationBody=name+"\\s*[(]\\s*"+ annotationElement+"(\\s*[,]\\s*"+annotationElement+")*\\s*[)]\\s*\\S*$"
+            var annotation= new RegExp("@\\s*"+annotationBody,"i");
+            var planAnnotations=new RegExp("@\\s*plan\\s*:\\s*"+annotationBody,"i")
 
             //console.log(txt,blockCommentEnd.test(txt) )
-            if(newStatement.test(txt)|| annotation.test(txt) || blockCommentEnd.test(txt) || lineComment.test(txt) || begin.test(txt) || spaces.test(txt) ||txt=="" || startingWord.test(txt)) {
+            if(newStatement.test(txt)|| annotation.test(txt) || planAnnotations.test(txt) || blockCommentEnd.test(txt) || lineComment.test(txt) || begin.test(txt) || spaces.test(txt) ||txt=="" || startingWord.test(txt)) {
                 //console.log("SUITABE FOR NEW char");
 
                 return true;
