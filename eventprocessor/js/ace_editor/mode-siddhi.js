@@ -22,7 +22,7 @@ ace.define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/
             "support.function": builtinFunctions,
             "keyword": keywords,
             "constant.language": builtinConstants,
-            "support.type":("int|string|bool|float|double|object"),
+            "support.type":("int|string|bool|float|double|object|long"),
             "constant.language.boolean": "true|false",
             "aggregate.function": "count|min|max|avg|sum",
             "window.function": "time|timeBatch|length|lengthBatch|externalTime"
@@ -32,7 +32,7 @@ ace.define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/
             "start" : [
                 {
                     token : "annotation.plan",
-                    regex : "@Plan\\:\\w+"
+                    regex : "@Plan\\s*\\:\\s*\\w+"
 
                 },
                 {
@@ -67,12 +67,12 @@ ace.define("ace/mode/siddhi_highlight_rules",["require","exports","module","ace/
 
                 {
                     token : "paren.lparen",
-                    regex : "[\\(]"
+                    regex : "\\("
                 },
 
                 {
                     token : "paren.rparen",
-                    regex : "[\\)]"
+                    regex : "\\)"
                 }, {
                     token : "text",
                     regex : "\\s+"
