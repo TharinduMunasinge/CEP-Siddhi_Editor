@@ -93,7 +93,8 @@
 
         //Adding Siddhi specific autocompleter
         langTools.addCompleter(completionEngine.SiddhiCompleter);
-
+        loadMetaData("siddhi-extensions.json","extensions");
+        loadMetaData("siddhi-inbuilt.json","system");
         //Attaching editor's onChange event handler
         editor.getSession().on('change',editorChangeHandler);
     };
@@ -305,6 +306,13 @@
             );
         }
 
+    }
+
+    function loadMetaData(jsonFile,property){
+        jQuery.getJSON( "../eventprocessor/js/"+jsonFile+"?callback=checkJson", function( data ) {
+
+            completionEngine[property]=data;
+        });
     }
 
 
