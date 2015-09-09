@@ -17,7 +17,8 @@
 <%@ page import="org.wso2.carbon.event.processor.ui.EventProcessorUIUtils" %>
 
 <%
-    EventProcessorAdminServiceStub eventProcessorAdminServiceStub = EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
+    EventProcessorAdminServiceStub eventProcessorAdminServiceStub =
+            EventProcessorUIUtils.getEventProcessorAdminService(config, session, request);
     String executionPlan = request.getParameter("executionPlan");
     String resultString;
     try {

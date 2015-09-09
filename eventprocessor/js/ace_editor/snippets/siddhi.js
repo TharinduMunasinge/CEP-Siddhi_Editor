@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -15,10 +14,10 @@
  * limitations under the License.
  */
 
-ace.define("ace/snippets/siddhi",["require","exports","module"], function(require, exports, module) {
-	"use strict";
+ace.define("ace/snippets/siddhi", ["require", "exports", "module"], function (require, exports, module) {
+    "use strict";
 
-	exports.snippetText = "#Define Statements\n\
+    exports.snippetText = "#Define Statements\n\
 snippet defStream\n\
 	define stream ${1:stream_name} ( ${2:attr1} ${3:Type1},${4:attN} ${5:TypeN});\n\
 snippet defTable\n\
@@ -94,7 +93,7 @@ snippet partition\n\
 		${7:query3}\n\
 	end;\n\
 ";
-	exports.scope = "siddhi";
+    exports.scope = "siddhi";
 
 });
 

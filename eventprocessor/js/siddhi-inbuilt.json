@@ -1,124 +1,123 @@
 {
-    "functions":{
-    "avg":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+  "functions": {
+    "avg": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "sum":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "sum": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "count":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "count": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "min":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "min": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "max":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "max": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "coalesce":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "coalesce": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "convert":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
-            "argTypes":[
-                [
-                    "float",
-                    "double"
-                ]
-            ],
-            "returnType":[
-                "float",
-                "double"
-            ]
-        }
+    "convert": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function",
+        "argTypes": [
+          [
+            "float",
+            "double"
+          ]
+        ],
+        "returnType": [
+          "float",
+          "double"
+        ]
+      }
     ],
-        "instanceOfBoolean":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "instanceOfBoolean": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "instanceOfDouble":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "instanceOfDouble": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "instanceOfFloat":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "instanceOfFloat": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "instanceOfLong":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "instanceOfLong": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "instanceOfString":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "instanceOfString": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "UUID":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "UUID": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "isMatch":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "isMatch": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "concat":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "concat": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ]
-},
-    "streamProcessors":{
-
-},
-    "windowProcessors":{
-    "time":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+  },
+  "streamProcessors": {
+  },
+  "windowProcessors": {
+    "time": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "timeBatch":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "timeBatch": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "length":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "length": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "lengthBatch":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "lengthBatch": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "unique":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "unique": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ],
-        "firstunique":[
-        {
-            "Description":"Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
-        }
+    "firstunique": [
+      {
+        "Description": "Returns the absolute value of p1. This function wraps the java.lang.Math.abs() function"
+      }
     ]
-}
+  }
 }

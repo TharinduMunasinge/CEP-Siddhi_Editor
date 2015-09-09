@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var ErrorListener=require("../../antlr4-js-runtime").error.ErrorListener;
-var loggerContext="AceErrorListener"
+var ErrorListener = require("../../antlr4-js-runtime").error.ErrorListener;
+var loggerContext = "AceErrorListener"
 function AceErrorListener() {
     ErrorListener.call(this);
     return this;
@@ -41,14 +41,13 @@ AceErrorListener.INSTANCE = new AceErrorListener();
 // line <em>line</em>:<em>charPositionInLine</em> <em>msg</em>
 // </pre>
 //
-AceErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol, line, column, msg, e) {
+AceErrorListener.prototype.syntaxError = function (recognizer, offendingSymbol, line, column, msg, e) {
 
 
-
-    SiddhiEditor.syntaxErrorList.push({row:line-1 ,column: column, text:msg,type:"error"});
+    SiddhiEditor.syntaxErrorList.push({row: line - 1, column: column, text: msg, type: "error"});
     if (SiddhiEditor.debug) {
-        console.warn(loggerContext+":"+"syntaxError"+"->");
-        console.error("  Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
+        console.warn(loggerContext + ":" + "syntaxError" + "->");
+        console.error("  Error line " + line + ":" + column + " " + msg, " recognizer:", recognizer, " offendingSymbol:", offendingSymbol, " e:", e);
     }
 
 };

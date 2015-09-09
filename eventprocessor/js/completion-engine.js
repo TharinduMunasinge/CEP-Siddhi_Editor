@@ -20,7 +20,7 @@
     //setting the module namespace
     var completionEngine = window.completionEngine || {};
     window.completionEngine = completionEngine;
-    var loggerContext="completionEngine";
+    var loggerContext = "completionEngine";
 
     //List of streams that would keep the meta data of the streams defined/inferred within the query.
     completionEngine.streamList = new StreamList();
@@ -31,48 +31,54 @@
     //List of functions that would keep the meta data of the functions defined within the query.
     completionEngine.functionList = new FunctionList();
 
-    //stream aliases in query are stored as a list of  aliasName:streamID .
-    // ex :
-    //  query
-    //  -----
-    //  from streamB as myStream join streamA as foo ...
-    //
-    //  representation
-    //  --------------
-    //  streamAliasList={
-    //    myStream : streamB,
-    //         foo : streamA
-    //  }
+   /* stream aliases in query are stored as a list of  aliasName:streamID .
+    * ex :
+    *  query
+    *  -----
+    *  from streamB as myStream join streamA as foo ...
+    *
+    *  representation
+    *  --------------
+    *  streamAliasList={
+    *    myStream : streamB,
+    *         foo : streamA
+    *  }
+    */
     completionEngine.streamAliasList = {};
 
-    //Event references in a query are stored as a list of  aliasName:streamID .
-    // ex :
-    //  query
-    //  -----
-    //  from e1=streamB -> e2=streamA ...
-    //
-    //  representation
-    //  --------------
-    //  eventStore ={
-    //    e1 : streamB,
-    //    e2 : streamA
-    //  }
+   /*
+    * Event references in a query are stored as a list of  aliasName:streamID .
+    *    ex :
+    *      query
+    *      -----
+    *      from e1=streamB -> e2=streamA ...
+    *
+    *      representation
+    *      --------------
+    *      eventStore ={
+    *        e1 : streamB,
+    *        e2 : streamA
+    *      }
+    */
     completionEngine.eventStore = {};
 
-    // completionEngine.wordList is the current suggestions list . This is an array of objects with following format
-    // {
-    //       definition:"suggestion name",
-    //       value : "suggestion value"
-    //       score : 2,
-    //       meta : "keyword"
-    // }
+
+     /*
+     * {
+     *
+     *      definition:"suggestion name",
+     *      value : "suggestion value"
+     *      score : 2,
+     *      meta : "keyword"
+     *   }
+     */
     completionEngine.wordList = [];
 
-
-    //'extension' json object contains the custom function,streamProcessor and windowProcessor extensions available for
-    // the current Siddhi Session. Currently the extensions listed in the documentation are listed below.
-    // But this data structure should be dynamically pull down from the backend services.
     /*
+     *   'extension' json object contains the custom function,streamProcessor and windowProcessor extensions available for
+     *   the current Siddhi Session. Currently the extensions listed in the documentation are listed below.
+     *   But this data structure should be dynamically pull down from the backend services.
+     *
      * SCHEMA
      * ------
      *    extensions={
@@ -123,7 +129,7 @@
     completionEngine.extensions = {}
 
     // System json object contains the inbuilt function,streamProcessor and windowProcessor  available for the current Siddhi Session
-    completionEngine.system ={}
+    completionEngine.system = {}
 
 
     //Constructor of the Stream class is exposed to global scope
@@ -184,7 +190,7 @@
      *                    cfg : "completionEngine._checkNestedBrackets", // CONVENTION : function name is started with _
      *                    next : "completionEngine.$FunctionHandler"
      *                 }
-     ************/
+     */
     var ruleBase = [
         {
             regex: "@(p(l(a(n?)?)?)?)((?![)]).)*$",
@@ -323,15 +329,11 @@
     ];
 
 
-
-
-
-
     /*************************************************************************************************************************
      *                                          Integration functions for Completion-Engine module
      *************************************************************************************************************************/
 
-    //SiddhiCompleter is attached with ext-language module. So that Ace editor library will be using this module for generate suggestions
+        //SiddhiCompleter is attached with ext-language module. So that Ace editor library will be using this module for generate suggestions
     completionEngine.SiddhiCompleter = {
         getCompletions: function (editor, session, pos, prefix, callback) {
 
@@ -372,7 +374,6 @@
         //      };
         //
         // This method will dynamically select the appropriate completer for current context when auto complete event occurred.
-
         var completerList = [];
         if (completionEngine.checkTheBeginning(editor)) {
             //if the cursor is positioned at the beginning of new statement(query), then show the suggestions from the
@@ -382,7 +383,6 @@
         }
         else {
             //if the cursor is placed in the middle of the statement
-
             if (completionEngine.checkVariableResovelness(editor)) {
                 //if the last token is the dot operator => only the attributes of the object/namespace should be listed
                 //so that just show the suggestions from the SiddhiComplreter
@@ -394,7 +394,6 @@
                 completerList = [SiddhiEditor.langTools.keyWordCompleter, completionEngine.SiddhiCompleter];
             }
         }
-
         editor.completers = completerList;
 
     };
@@ -410,7 +409,6 @@
         var namespaceRegex = /\w*:$/i;
         var txt = editor.getValue();
         return !!(objectNameRegex.test(txt) || namespaceRegex.test(txt));
-
     };
 
     /**
@@ -450,7 +448,7 @@
             if (newStatement.test(txt) || annotation.test(txt) || planAnnotations.test(txt) || blockCommentEnd.test(txt) || lineComment.test(txt) || begin.test(txt) || spaces.test(txt) || txt == "" || startingWord.test(txt)) {
 
                 if (SiddhiEditor.debug) {
-                    console.warn(loggerContext+":"+"checkTheBeginning"+"->");
+                    console.warn(loggerContext + ":" + "checkTheBeginning" + "->");
                     console.log("New statement is suitable for current position");
                 }
                 return true;
@@ -478,27 +476,20 @@
         completionEngine.eventStore = {};           //clear the global tables for event references and stream alias
         completionEngine.streamAliasList = {};
 
-
         text = text.replace(/\s/g, " "); //Replace all the white spaces with single space each.
         // This step is important for identifying the statements span across  multiple lines using regular expressions.
         // Regular expressions listed in 'ruleBase' structure only identify the prefixes span in single line.
         // By replacing newline characters of the input text with spaces, those rules can be used for identifying multiline prefixes.
 
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"calculateCompletions"+"->");
+            console.warn(loggerContext + ":" + "calculateCompletions" + "->");
             console.log("input text", text);
         }
-
         completionEngine.wordList = [];  //clear the previous suggestion list
         if (completionEngine.checkTheBeginning(editor)) {
             completionEngine.wordList = completionEngine.$initialList();
         }
-
-
         for (var a = 0; a < ruleBase.length; a++) {
-
-
-
             if (ruleBase[a].hasOwnProperty("cfg")) {
 
                 if (executeFunctionByName(ruleBase[a].cfg, window, [text])) {
@@ -519,8 +510,8 @@
                 if (regx.test(text)) {
 
                     if (SiddhiEditor.debug) {
-                        console.warn(loggerContext+":"+"calculateCompletion"+"->");
-                        console.log("Matched regular expression : ",text, ruleBase[a]);
+                        console.warn(loggerContext + ":" + "calculateCompletion" + "->");
+                        console.log("Matched regular expression : ", text, ruleBase[a]);
                     }
 
                     if (Object.prototype.toString.call(ruleBase[a].next) === '[object Array]') {
@@ -531,8 +522,8 @@
                     }
 
                     if (SiddhiEditor.debug) {
-                        console.warn(loggerContext+":"+"calculateCompletion"+"->");
-                        console.log("Generated suggestion List",completionEngine.wordList);
+                        console.warn(loggerContext + ":" + "calculateCompletion" + "->");
+                        console.log("Generated suggestion List", completionEngine.wordList);
                     }
 
                     return;
@@ -542,40 +533,26 @@
     };
 
 
-
-
-
     /*************************************************************************************************************************
      *                                          Context identification functions
      *************************************************************************************************************************/
 
     completionEngine._checkNestedSquareBracketInFROMPhrase = function (arg) {
-        var fromRegxp = /from((?:.(?!from))+)$/i;
-
-
-        var fromPhrase = fromRegxp.exec(arg[0]);
-
+        var fromRegExp = /from((?:.(?!from))+)$/i;
+        var fromPhrase = fromRegExp.exec(arg[0]);
         if (fromPhrase == null)
             return false;
-        var bracketCouter = 0;
-
+        var bracketCounter = 0;
         for (var index = fromPhrase[1].length - 1; index >= 0; index--) {
-
             if (fromPhrase[1].charAt(index) == '[')
-                bracketCouter++;
+                bracketCounter++;
             else if (fromPhrase[1].charAt(index) == ']')
-                bracketCouter--;
-
-            if (bracketCouter > 0)
+                bracketCounter--;
+            if (bracketCounter > 0)
                 return true;
         }
-
         return false;
-
     };
-
-
-
 
 
     /*************************************************************************************************************************
@@ -583,8 +560,8 @@
      *************************************************************************************************************************/
 
     completionEngine.$initialList = function () {
-        var intialArray = ["define", "from", "partition", "@"];
-        return makeCompletions(intialArray)
+        var initialArray = ["define", "from", "partition", "@"];
+        return makeCompletions(initialArray,1);
     };
     completionEngine.$fromPhraseStreamIdList = function (args) {
 
@@ -599,13 +576,11 @@
             return d + ".";
         });
 
-
         completionEngine.$streamAlias(args[0]);
         var aliasList = getStreamAliasList();
         aliasList = aliasList.map(function (d) {
             return d + ".";
         });
-
 
         essentialKeyWords = makeCompletions(essentialKeyWords, 2);
         aliasList = makeCompletions(aliasList, 5);
@@ -621,37 +596,32 @@
         return tempList;
     };
     completionEngine.$selectPhraseAttributesList = function (args) {
-//Stream Alias yet to be handled , both in 'stream as e' form and "e1=stream"
-        var keyWords = ["as", "insert", "group by", "having", "output", "update", "delete"];
 
+        var keyWords = ["as", "insert", "group by", "having", "output", "update", "delete"];
 
         var sysFunctions = getSystemFunctionNames();
         sysFunctions = sysFunctions.map(function (d) {
             return d + "(args)";
         });
 
-
         var ns = getExtensionNamesSpaces(FUNCTIONS);
         ns = ns.map(function (d) {
             return d + ":";
         });
-
 
         var tableList = completionEngine.tableList.getTableIDList();
         tableList = tableList.map(function (d) {
             return d + ".";
         });
 
-
         var result = args[1].exec(args[0]);
         var streamNames = completionEngine.streamList.getStreamIDList();
         var fromPhrase = /from(.*)select/i.exec(result[0]);
 
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$selectPhraseAttributesList"+"->");
-            console.log("From Phrase",fromPhrase);
+            console.warn(loggerContext + ":" + "$selectPhraseAttributesList" + "->");
+            console.log("From Phrase", fromPhrase);
         }
-
 
         completionEngine.$streamAlias(result[0]);
         var aliasList = getStreamAliasList();
@@ -659,43 +629,30 @@
             return d + ".";
         });
 
-
         completionEngine.$eventReference(result[0]);
         var refList = getEventReferences();
         refList = refList.map(function (d) {
             return d + ".";
         });
 
-
         var streamIds = [];
         var list = [];
         for (var index = 0; index < streamNames.length; index++) {
             var regex = new RegExp("[^a-zA-Z]" + streamNames[index] + "[^a-zA-Z0-9]");
-
             if (fromPhrase[1].match(regex)) {
                 streamIds.push(streamNames[index]);
                 tempList = completionEngine.streamList.getAttributeList(streamNames[index]);
-
                 list = list.concat(tempList);
-
-
             }
-
-
         }
 
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$selectPhraseAttributesList"+"->");
-            console.log("generated list",list);
+            console.warn(loggerContext + ":" + "$selectPhraseAttributesList" + "->");
+            console.log("generated list", list);
         }
-
         streamIds = streamIds.map(function (d) {
             return d + ".";
         });
-
-
-        var tempList = [];
-
         streamIds = makeCompletions(streamIds, 5);
         list = makeCompletions(list, 8);
         refList = makeCompletions(refList, 7);
@@ -705,7 +662,7 @@
         keyWords = makeCompletions(keyWords, 1);
         sysFunctions = makeCompletions(sysFunctions, 2);
 
-
+        var tempList;
         tempList = (keyWords.concat(ns));
         tempList = tempList.concat(streamIds);
         tempList = tempList.concat(tableList);
@@ -713,26 +670,20 @@
         tempList = tempList.concat(aliasList);
         tempList = tempList.concat(sysFunctions);
         tempList = tempList.concat(list);
-        //insert, Aggregate functions  , as In From phrase , e1.
+
         return tempList;
     };
-    completionEngine.$windowPhrase = function (args) {
+    completionEngine.$windowPhrase = function () {
         var defaultArray = ["time(1 min)", "timeBatch( 1 min)", "length(10)", "lengthBatch(10)", "externalTime(timeStamp,windowTime)"];
-
-
         var nsArray = getExtensionNamesSpaces(WINDOW_PROCESSORS);
         nsArray = nsArray.map(function (d) {
             return d + ":";
         });
-
         defaultArray = defaultArray.concat(nsArray);
         return makeCompletions(defaultArray);
     };
-    completionEngine.$processorPhrase = function (args) {
+    completionEngine.$processorPhrase = function () {
         var defaultArray = ["window."];
-
-        //if built in streamProcessors exist , they should be included
-
         defaultArray = makeCompletions(defaultArray, 2);
 
         var nsArray = getExtensionNamesSpaces(WINDOW_PROCESSORS, STREAM_PROCESSORS);
@@ -744,24 +695,19 @@
         return (defaultArray);
     };
 
-
-    completionEngine.$allAttributeList = function (args) {
+    completionEngine.$allAttributeList = function () {
         var tempList = [];
         var streamList = completionEngine.streamList.getStreamIDList();
-
         for (var s = 0; s < streamList.length; s++) {
-
             var attributeList = completionEngine.streamList.getAttributeList(streamList[s]);
             tempList = tempList.concat(makeCompletions(attributeList, s));
         }
-
-
         return tempList;
     };
     completionEngine.$partitionStreamList = function (args) {
         var tempList = [];
-        var regx = "(" + identifier + ")\\s+of\\s+\\w*$";
-        var identifierResult = (new RegExp(regx)).exec(args[0]);
+        var regexp = "(" + identifier + ")\\s+of\\s+\\w*$";
+        var identifierResult = (new RegExp(regexp)).exec(args[0]);
 
         var streamList = completionEngine.streamList.getStreamIDList();
         for (var i = 0; i < streamList.length; i++) {
@@ -774,14 +720,12 @@
             }
         }
 
-
         return makeCompletions(tempList);
     };
-    completionEngine.$TableSuggestions = function (args) {
+    completionEngine.$TableSuggestions = function () {
         return makeCompletions(completionEngine.tableList.getTableIDList());
-
     };
-    completionEngine.$UDPhrase = function (args) {
+    completionEngine.$UDPhrase = function () {
         var tempList = ["for", "on"];
         tempList = makeCompletions(tempList, 1);
 
@@ -802,125 +746,89 @@
         var regex;
         for (var i = 0; i < streamNames.length; i++) {
             regex = new RegExp("[^a-zA-Z]" + streamNames[i] + "[^a-zA-Z0-9]");
-
             if (fromPhrase[1].match(regex)) {
                 streamList.push(streamNames[i]);
                 attributeList = attributeList.concat(completionEngine.streamList.getAttributeList(streamNames[i]))
             }
         }
 
-
         var tempList = [];
-
         streamList = streamList.map(function (d) {
             return d + "."
         });
-
-
-        var UDphrase = /(update|delete)(.*)on/i.exec(result[0]);
-
+        var UpdateORDeletePhrase = /(update|delete)(.*)on/i.exec(result[0]);
 
         var tableList = [];
         for (i = 0; i < tableNames.length; i++) {
 
             regex = new RegExp("[^a-zA-Z]" + tableNames[i] + "[^a-zA-Z0-9]");
 
-            if (UDphrase[2].match(regex))
-            //
-            //if( UDphrase[2].indexOf(tableNames[i]))
-                tableList.push(tableNames[i]);
+            if (UpdateORDeletePhrase[2].match(regex))
+                          tableList.push(tableNames[i]);
         }
 
         tableList = tableList.map(function (d) {
             return d + "."
         });
 
-
         tempList = tempList.concat(makeCompletions(tableList, 4));
         tempList = tempList.concat(makeCompletions(attributeList, 3));
-
         tempList = tempList.concat(makeCompletions(streamList, 2));
-
         tempList = tempList.concat(makeCompletions(keywords, 1));
-
         return tempList;
     };
-
 
     completionEngine.$selectPhraseGroupBy = function (args) {
         var keywords = ["output", "having", "insert", "delete", "update"];
         var result = args[1].exec(args[0]);
-        var regx = /from(.*)group/i;
-
-        var fromPhrase = regx.exec(result[0]);
-
+        var regex = /from(.*)group/i;
+        var fromPhrase = regex.exec(result[0]);
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$selectPhraseGroupBy"+"->");
-            console.log("fromPhrase:",fromPhrase);
+            console.warn(loggerContext + ":" + "$selectPhraseGroupBy" + "->");
+            console.log("fromPhrase:", fromPhrase);
         }
 
-
-        //
         var streamNames = completionEngine.streamList.getStreamIDList();
         var list = [];
-        var templist = [];
+        var tempList = [];
 
         list = list.concat(makeCompletions(keywords, 1));
-
         for (var index = 0; index < streamNames.length; index++) {
             var regex = new RegExp("[^a-zA-Z]" + streamNames[index] + "[^a-zA-Z0-9]");
-
             if (fromPhrase[1].match(regex)) {
-
-
-                templist = templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
-
+                tempList = tempList.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
             }
-
-
         }
 
         streamNames = streamNames.map(function (d) {
             return d + ".";
         });
 
-        list = list.concat(makeCompletions(streamNames), 2);
-        list = list.concat(makeCompletions(templist, 3));
-
+        list = list.concat(makeCompletions(streamNames , 2));
+        list = list.concat(makeCompletions(tempList, 3));
         return list;
     };
     completionEngine.$selectPhraseHaving = function (args) {
         var keywords = ["output", "insert", "delete", "update"];
         keywords = keywords.concat(logicalOperatorList);
-
         var result = args[1].exec(args[0]);
-        var regx = /from(.*)having/i;
+        var regexp = /from(.*)having/i;
 
-        var fromPhrase = regx.exec(result[0]);
+        var fromPhrase = regexp.exec(result[0]);
 
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$selectPhraseHaving"+"->");
-            console.log("fromPhrase:",fromPhrase);
+            console.warn(loggerContext + ":" + "$selectPhraseHaving" + "->");
+            console.log("fromPhrase:", fromPhrase);
         }
-
-
-        //
         var streamNames = completionEngine.streamList.getStreamIDList();
         var list = [];
-        var templist = [];
-
+        var tempList = [];
 
         for (var index = 0; index < streamNames.length; index++) {
             var regex = new RegExp("[^a-zA-Z]" + streamNames[index] + "[^a-zA-Z0-9]");
-
             if (fromPhrase[1].match(regex)) {
-
-
-                templist = templist.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
-
+                  tempList = tempList.concat(completionEngine.streamList.getAttributeList(streamNames[index]));
             }
-
-
         }
 
         streamNames = streamNames.map(function (d) {
@@ -941,19 +849,17 @@
         list = list.concat(makeCompletions(namespaces, 3));
         list = list.concat(makeCompletions(sysFunctions, 1));
         list = list.concat(makeCompletions(streamNames, 4));
-        list = list.concat(makeCompletions(templist, 5));
-
+        list = list.concat(makeCompletions(tempList, 5));
         return list;
     };
     completionEngine.$filterPhrase = function (args) {
         var keyword = logicalOperatorList;
-
-        var fromRegxp = /from((?:.(?!from))+)$/i;
-        var result = fromRegxp.exec(args[0]);
+        var fromRegExp = /from((?:.(?!from))+)$/i;
+        var result = fromRegExp.exec(args[0]);
 
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$filterPhrase"+"->");
-            console.log("result:",result);
+            console.warn(loggerContext + ":" + "$filterPhrase" + "->");
+            console.log("result:", result);
         }
         var start = -1;
         var temp = "";
@@ -974,42 +880,33 @@
                     temp = result[0].charAt(i) + temp;
                 }
             }
-
             if (result[0].charAt(i) == ']')
                 start--;
-
             if (result[0].charAt(i) == '[')
                 start++;
 
         }
 
-
-        var temparray = [];
-        temparray = temparray.concat(makeCompletions(keyword, 1));
+        var tempArray = [];
+        tempArray = tempArray.concat(makeCompletions(keyword, 1));
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$filterPhrase"+"->");
+            console.warn(loggerContext + ":" + "$filterPhrase" + "->");
             console.log("Event LIST ", temp);
         }
-
         if (completionEngine.eventStore.hasOwnProperty(temp)) {
-            temparray = ["last"];
+            tempArray = ["last"];
 
-            temparray = makeCompletions(temparray, 2)
+            tempArray = makeCompletions(tempArray, 2)
         }
         else {
-
-
             var refList = getEventReferences();
             refList = makeCompletions(refList, 2);
-
             var attrList = completionEngine.streamList.getAttributeList(temp);
             attrList = makeCompletions(attrList, 3);
-            temparray = temparray.concat(refList);
-            temparray = temparray.concat(attrList);
+            tempArray = tempArray.concat(refList);
+            tempArray = tempArray.concat(attrList);
         }
-
-
-        return temparray;
+        return tempArray;
     };
     completionEngine.$nameSpacePhrase = function (args) {
         var result = args[1].exec(args[0]);
@@ -1036,9 +933,7 @@
             ns = functionPhrase[1];
             tempArray = getExtensionFunctionNames(ns);
         }
-        else {
 
-        }
         tempArray = tempArray.map(function (d) {
             return d + "(argList)"
         });
@@ -1047,12 +942,10 @@
 
     };
     completionEngine.$resolveVariable = function (args) {
-
-
         var result = args[1].exec(args[0]);
         var tempList = [];
         if (SiddhiEditor.debug) {
-            console.warn(loggerContext+":"+"$resolveVariable"+"->");
+            console.warn(loggerContext + ":" + "$resolveVariable" + "->");
             console.log("result ", result);
         }
 
@@ -1064,26 +957,19 @@
         else {
             if (completionEngine.eventStore.hasOwnProperty(result[1]))
                 result[1] = completionEngine.eventStore[result[1]];
-
             if (completionEngine.streamAliasList.hasOwnProperty(result[1]))
                 result[1] = completionEngine.streamAliasList[result[1]];
-
             if (completionEngine.streamList.hasStream(result[1]))
                 tempList = completionEngine.streamList.getAttributeList(result[1])
         }
         return makeCompletions(tempList, 1);
     };
     completionEngine.$streamAlias = function (str) {
-        var fromRegxp = /from((?:.(?!from))+)$/i;
-
-
-        var fromPhrase = fromRegxp.exec(str);
-
+        var fromRegExp = /from((?:.(?!from))+)$/i;
+        var fromPhrase = fromRegExp.exec(str);
         var asRegexp = /\s+as\s+(\w+)\s+/;
-
         var tokenArray = fromPhrase[1].split(asRegexp);
         var streamIdList = completionEngine.streamList.getStreamIDList();
-
         var Alias = {};
         if (tokenArray.length >= 2) {
             for (var i = 0; i + 1 < tokenArray.length; i += 2) {
@@ -1101,52 +987,36 @@
                 completionEngine.streamAliasList[tokenArray[i + 1]] = strId;
             }
         }
-
-
         return Alias;
     };
 
     completionEngine.$eventReferenceHandler = function (args) {
-
         var results = args[1].exec(args[0]);
-
         completionEngine.$eventReference(args[0]);
         completionEngine.$streamAlias(args[0]);
         var ref = completionEngine.eventStore[results[1]];
         var tempList = completionEngine.streamList.getAttributeList(ref);
         return makeCompletions(tempList);
-
     };
     completionEngine.$eventReference = function (str) {
         var fromRegxp = /from((?:.(?!from))+)$/i;
-
-
         var fromPhrase = fromRegxp.exec(str);
-
         var eventRef = /(\w+\s*=\s*\w+)/;
-
         var tokenArray = fromPhrase[1].split(eventRef);
         var streamIdList = completionEngine.streamList.getStreamIDList();
 
-
         for (var i = 0; i < tokenArray.length; i++) {
-
             var strId = "";
             if (tokenArray[i].indexOf('=') > 0 && tokenArray[i].indexOf('==') < 0 && tokenArray[i].indexOf('<=') < 0 && tokenArray[i].indexOf('>=') < 0) {
-
-
                 var keyValue = tokenArray[i].split("=");
                 if (SiddhiEditor.debug) {
-                    console.warn(loggerContext+":"+"$eventReference"+"->");
-                    console.log("keyvalue",keyValue);
+                    console.warn(loggerContext + ":" + "$eventReference" + "->");
+                    console.log("keyvalue", keyValue);
                 }
 
                 var keyRegex = /(\w+)\s*$/i;
                 var valueRegex = /^\s*(\w+)/i;
-
-
                 var ref = keyRegex.exec(keyValue[0]);
-
                 var value = valueRegex.exec(keyValue[1]);
                 if (ref && value && ref[0] && value[0]) {
                     value = value[0].trim();
@@ -1167,14 +1037,9 @@
                     completionEngine.eventStore[ref] = value;
                 }
             }
-
-
         }
 
     };
-
-
-
 
 
     /*************************************************************************************************************************
@@ -1244,8 +1109,8 @@
     /**
      * Get the list of namespaces which has artifacts in  objeType1 or objTyepe2 categories
      *
-     * @param {string} objType1 : windowProcessors|functions|streamProcessors
-     * @param {string} objType2 : windowProcessors|functions|streamProcessors
+     * @param {String} objType1 : windowProcessors|functions|streamProcessors
+     * @param {String} objType2 : windowProcessors|functions|streamProcessors
      * @returns {Array} : list of namespaces.
      */
     function getExtensionNamesSpaces(objType1, objType2) {
@@ -1254,7 +1119,7 @@
         for (var propertyName in completionEngine.extensions) {
             if (completionEngine.extensions.hasOwnProperty(propertyName)) {
                 if (SiddhiEditor.debug) {
-                    console.warn(loggerContext+":"+"getExtensionNamesSpaces"+"->");
+                    console.warn(loggerContext + ":" + "getExtensionNamesSpaces" + "->");
                     console.log(completionEngine.extensions[propertyName][objType1], objType1, propertyName);
                     console.log("RESULTS", objType1 && !isEmpty(completionEngine.extensions[propertyName][objType1]));
                 }
@@ -1368,10 +1233,6 @@
         }
         return tempList;
     }
-
-
-
-
 
 
     /*************************************************************************************************************************

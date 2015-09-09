@@ -37,13 +37,15 @@
             src="js/create_execution_plan_helper.js"></script>
 
     <link type="text/css" href="../resources/css/registry.css" rel="stylesheet"/>
-        <div id="custom_dcontainer" style="display:none"></div>
+    <div id="custom_dcontainer" style="display:none"></div>
 
     <div id="middle">
         <h2><fmt:message key="title.execution.plan.create"/></h2>
+
         <div id="workArea">
 
-            <form name="inputForm" action="index.jsp?ordinal=1" method="post" id="addExecutionPlanForm">
+            <form name="inputForm" action="index.jsp?ordinal=1" method="post"
+                  id="addExecutionPlanForm">
 
                 <table style="width:100%" id="eventProcessorAdd"
                        class="styledLeft noBorders spacer-bot">
@@ -55,7 +57,7 @@
                     </thead>
                     <tbody>
                     <tr id="uiElement">
-                    <%@include file="inner_execution_plan_ui.jsp" %>
+                        <%@include file="inner_execution_plan_ui.jsp" %>
                     </tr>
                     <tr>
                         <td class="buttonRow">

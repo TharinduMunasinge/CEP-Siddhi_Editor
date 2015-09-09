@@ -25,10 +25,10 @@ function validateQueries() {
     }
 
     new Ajax.Request('../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp', {
-        method:'POST',
-        asynchronous:false,
-        parameters:{executionPlan:executionPlan },
-        onSuccess:function (callbackMessage) {
+        method: 'POST',
+        asynchronous: false,
+        parameters: {executionPlan: executionPlan},
+        onSuccess: function (callbackMessage) {
             var resultText = callbackMessage.responseText.trim();
             if (resultText == "success") {
                 CARBON.showInfoDialog("Queries are valid!");
@@ -46,10 +46,10 @@ function createImportedStreamDefinition(element) {
     var selectedVal = element.options[element.selectedIndex].value;
     if (selectedVal == 'createStreamDef') {
         new Ajax.Request('../eventstream/popup_create_event_stream_ajaxprocessor.jsp', {
-            method:'POST',
-            asynchronous:false,
-            parameters:{callback:"inflow"},
-            onSuccess:function (data) {
+            method: 'POST',
+            asynchronous: false,
+            parameters: {callback: "inflow"},
+            onSuccess: function (data) {
                 showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateInflowStreamDefinition, "90%");
             }
         });
@@ -90,10 +90,10 @@ function createExportedStreamDefinition(element) {
         var jsonStreamDefinition = "";
 
         new Ajax.Request('../eventprocessor/export_siddhi_stream_ajaxprocessor.jsp', {
-            method:'POST',
-            asynchronous:false,
-            parameters:{executionPlan:executionPlan, targetStream:valueOf },
-            onSuccess:function (data) {
+            method: 'POST',
+            asynchronous: false,
+            parameters: {executionPlan: executionPlan, targetStream: valueOf},
+            onSuccess: function (data) {
                 jsonStreamDefinition = data.responseText;
             }
         });
@@ -102,21 +102,21 @@ function createExportedStreamDefinition(element) {
             jsonStreamDefinition = jsonStreamDefinition.replace(/^\s+|\s+$/g, '');
             if (jsonStreamDefinition == "") {
                 CARBON.showErrorDialog("No matching stream definition can be found for: " + valueOf + ". " +
-                                       "Please fill the 'Value of' field with a valid stream name.");
+                "Please fill the 'Value of' field with a valid stream name.");
                 return;
             }
         } else {
             CARBON.showErrorDialog("No matching stream definition can be found for: " + valueOf + ". " +
-                                   "Please fill the 'Value of' field with a valid stream name.");
+            "Please fill the 'Value of' field with a valid stream name.");
             return;
         }
 
 
         new Ajax.Request('../eventstream/popup_create_event_stream_ajaxprocessor.jsp', {
-            method:'POST',
-            asynchronous:false,
-            parameters:{streamDef:jsonStreamDefinition, callback:"outflow"},
-            onSuccess:function (data) {
+            method: 'POST',
+            asynchronous: false,
+            parameters: {streamDef: jsonStreamDefinition, callback: "outflow"},
+            onSuccess: function (data) {
                 showCustomPopupDialog(data.responseText, "Create Stream Definition", "80%", "", onSuccessCreateOutflowStreamDefinition, "90%");
             }
         });
@@ -144,10 +144,10 @@ function addImportedStreamDefinition() {
     }
 
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
-        method:'POST',
-        asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propAs.value },
-        onSuccess:function (eventStreamDefinition) {
+        method: 'POST',
+        asynchronous: false,
+        parameters: {streamId: propStreamId.value, streamAs: propAs.value},
+        onSuccess: function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
             var streamAs = definitions[1].trim();
@@ -156,23 +156,23 @@ function addImportedStreamDefinition() {
             var currentExecutionPlan = window.queryEditor.getValue();
             var executionPlanHeader = "";
             var executionPlanBody = "";
-            if(currentExecutionPlan != "") {
+            if (currentExecutionPlan != "") {
                 var linesArray = currentExecutionPlan.split(SIDDHI_LINE_BREAK_CHARACTER);
                 var bodyBeginIndex = -1;
-                for (var i = 0; i < linesArray.length ; i++){
+                for (var i = 0; i < linesArray.length; i++) {
                     var line = linesArray[i];
-                    if(line.match(REGEX_LINE_STARTING_WITH_PLAN) != null
+                    if (line.match(REGEX_LINE_STARTING_WITH_PLAN) != null
                         || line.match(REGEX_LINE_STARTING_WITH_SINGLE_LINE_COMMENT) != null
                         || line.match(REGEX_LINE_STARTING_WITH_MULTI_LINE_COMMENT) != null
-                        || line == ""){
+                        || line == "") {
                         executionPlanHeader += line + SIDDHI_LINE_BREAK;
                     } else {
                         bodyBeginIndex = i;
                         break;
                     }
                 }
-                if(bodyBeginIndex != -1){
-                    for (var i = bodyBeginIndex; i < linesArray.length ; i++){
+                if (bodyBeginIndex != -1) {
+                    for (var i = bodyBeginIndex; i < linesArray.length; i++) {
                         var line = linesArray[i];
                         executionPlanBody += SIDDHI_LINE_BREAK + line;
                     }
@@ -218,10 +218,10 @@ function addExportedStreamDefinition() {
     }
 
     new Ajax.Request('../eventprocessor/get_stream_definition_ajaxprocessor.jsp', {
-        method:'POST',
-        asynchronous:false,
-        parameters:{streamId:propStreamId.value, streamAs:propValueOf.value },
-        onSuccess:function (eventStreamDefinition) {
+        method: 'POST',
+        asynchronous: false,
+        parameters: {streamId: propStreamId.value, streamAs: propValueOf.value},
+        onSuccess: function (eventStreamDefinition) {
             var definitions = eventStreamDefinition.responseText.trim().split("|=");
             var streamId = definitions[0].trim();
             var streamAs = definitions[1].trim();
@@ -231,17 +231,17 @@ function addExportedStreamDefinition() {
             var executionPlanHeader = "";
             var executionPlanBody = "";
 
-            if(currentExecutionPlan != "") {
+            if (currentExecutionPlan != "") {
                 var linesArray = currentExecutionPlan.split(SIDDHI_LINE_BREAK_CHARACTER);
                 var bodyBeginIndex = -1;
-                for (var i = 0; i < linesArray.length ; i++){
+                for (var i = 0; i < linesArray.length; i++) {
                     var line = linesArray[i];
-                    if(line.match(REGEX_LINE_STARTING_WITH_PLAN) != null
+                    if (line.match(REGEX_LINE_STARTING_WITH_PLAN) != null
                         || line.match(REGEX_LINE_STARTING_WITH_SINGLE_LINE_COMMENT) != null
                         || line.match(REGEX_LINE_STARTING_WITH_MULTI_LINE_COMMENT) != null
                         || line == ""
-                        || line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null){
-                        if(line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null){
+                        || line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null) {
+                        if (line.match(REGEX_LINE_STARTING_WITH_IMPORT_STATEMENT) != null) {
                             executionPlanHeader += line + SIDDHI_LINE_BREAK;
                             executionPlanHeader += linesArray[++i] + SIDDHI_LINE_BREAK;
                         } else {
@@ -252,8 +252,8 @@ function addExportedStreamDefinition() {
                         break;
                     }
                 }
-                if(bodyBeginIndex != -1){
-                    for (var i = bodyBeginIndex; i < linesArray.length ; i++){
+                if (bodyBeginIndex != -1) {
+                    for (var i = bodyBeginIndex; i < linesArray.length; i++) {
                         var line = linesArray[i];
                         executionPlanBody += SIDDHI_LINE_BREAK + line;
                     }
@@ -280,10 +280,10 @@ function addExecutionPlan(form) {
     }
 
     new Ajax.Request('../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp', {
-        method:'POST',
-        asynchronous:false,
-        parameters:{executionPlan:executionPlan },
-        onSuccess:function (callbackMessage) {
+        method: 'POST',
+        asynchronous: false,
+        parameters: {executionPlan: executionPlan},
+        onSuccess: function (callbackMessage) {
             var resultText = callbackMessage.responseText.trim();
             if (resultText == "success") {
                 makeAsyncCallToCreateExecutionPlan(form, executionPlan);
@@ -341,10 +341,10 @@ function getDuplicatedStreams() {
 
 function makeAsyncCallToCreateExecutionPlan(form, queryExpressions) {
     new Ajax.Request('../eventprocessor/add_execution_plan_ajaxprocessor.jsp', {
-        method:'POST',
-        asynchronous:false,
-        parameters:{queryExpressions:queryExpressions },
-        onSuccess:function (transport) {
+        method: 'POST',
+        asynchronous: false,
+        parameters: {queryExpressions: queryExpressions},
+        onSuccess: function (transport) {
             if ("true" == transport.responseText.trim()) {
                 form.submit();
             } else {
@@ -359,13 +359,13 @@ function loadUIElements(uiId) {
     uiElementTd.innerHTML = "";
 
     jQuery.ajax({
-        type:"POST",
-        url:"../eventexecutionplanwizard/get_ui_ajaxprocessor.jsp?uiId=" + uiId + "",
-        data:{},
-        contentType:"text/html; charset=utf-8",
-        dataType:"text",
-        async:false,
-        success:function (ui_content) {
+        type: "POST",
+        url: "../eventexecutionplanwizard/get_ui_ajaxprocessor.jsp?uiId=" + uiId + "",
+        data: {},
+        contentType: "text/html; charset=utf-8",
+        dataType: "text",
+        async: false,
+        success: function (ui_content) {
             if (ui_content != null) {
                 jQuery(uiElementTd).html(ui_content);
 

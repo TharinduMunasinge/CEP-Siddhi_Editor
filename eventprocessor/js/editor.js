@@ -18,32 +18,32 @@
  *  This Script contains the integration code segment of Siddhi editor.
  *  This will set the options of ACE editor, attach client side parser and attach SiddhiCompletion Engine with the editor
  **/
-(function (){
+(function () {
 
     // Adding SiddhiEditor namespace
     var SiddhiEditor = window.SiddhiEditor || {};
     window.SiddhiEditor = SiddhiEditor;
-    var loggerContext="SiddhiEditor";
+    var loggerContext = "SiddhiEditor";
 
     //Antlr4 JS runtime integration code segment goes here..
-    var antlr4 = require('../eventprocessor/js/antlr4-js-runtime.js');       //Antlr4 JS runtime
-    var SiddhiQLGrammarLexer = require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLLexer');
-    var SiddhiQLGrammarParser = require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLParser');
-    var CustomSiddhiListener = require('../eventprocessor/js/client_side_Siddhi_parser/gen/CustomSiddhiListener');                       //custom listener for Siddhi
-    var AceErrorListener=require("../eventprocessor/js/client_side_Siddhi_parser/gen/AceErrorListener").AceErrorListener;
+    var antlr4 = require(ANTLR_CONSTANT.DISTRIBUTION);       //Antlr4 JS runtime
+    var SiddhiQLGrammarLexer = require(ANTLR_CONSTANT.ROOT + ANTLR_CONSTANT.SIDDHI_LEXER);
+    var SiddhiQLGrammarParser = require(ANTLR_CONSTANT.ROOT + ANTLR_CONSTANT.SIDDHI_PARSER);
+    var CustomSiddhiListener = require(ANTLR_CONSTANT.ROOT + ANTLR_CONSTANT.SIDDHI_LISTENER);                       //custom listener for Siddhi
+    var AceErrorListener = require(ANTLR_CONSTANT.ROOT + ANTLR_CONSTANT.ERROR_LISTENER).AceErrorListener;
 
     //Adding Additional ACE editor modules
-    var langTools = ace.require("ace/ext/language_tools");  //Required for auto completion
-    var TokenTooltip = require("js/ace_editor/token-tooltip").TokenTooltip;   //Required for token tooltips
-    var Range = ace.require("ace/range").Range ;        //Required for extracting part of the query
+    var langTools = ace.require(ACE_CONSTANT.LANG_TOOL);  //Required for auto completion
+    var TokenTooltip = require(ACE_CONSTANT.TOKEN_TOOLTIP).TokenTooltip;   //Required for token tooltips
+    var Range = ace.require(ACE_CONSTANT.ACE_RANGE).Range;        //Required for extracting part of the query
     var editor;
-    var foundErrors=false;
+    var foundErrors = false;
 
     //following variables are exposed to outside
     SiddhiEditor.Range = Range;
-    SiddhiEditor.langTools=langTools;
-    SiddhiEditor.combine=combine;
-    SiddhiEditor.debug=false;
+    SiddhiEditor.langTools = langTools;
+    SiddhiEditor.combine = combine;
+    SiddhiEditor.debug = false;
 
 
     /**
@@ -51,22 +51,34 @@
      * @augments : Configuration object
      * @description : This method contains the initialization code of for Siddhi Editor
      */
-    SiddhiEditor.init = function () {
-        editor= ace.edit("editor");  //Setting the DivID of the Editor .. Could be <pre> or <div> tags
-        SiddhiEditor.editor=editor;   //Saving editor instance in SiddhiEditor namespace for later use
+    SiddhiEditor.init = function (config) {
+
+        var realTimeValidation = config.realTimeValidation;
+        var divID = config.divID;
+        var autoCompletion = config.autoCompletion;
+        var readOnly = config.readOnly;
+
+        //readOnly and realtime variables need to be exposed to outside
+        SiddhiEditor.realTimeValidation = realTimeValidation;
+        SiddhiEditor.readOnly = readOnly;
+
+        editor = ace.edit(divID);  //Setting the DivID of the Editor .. Could be <pre> or <div> tags
+        SiddhiEditor.editor = editor;   //Saving editor instance in SiddhiEditor namespace for later use
         window.queryEditor = SiddhiEditor.editor; //Saving editor instance in Window namespace . Since other existing JS code refer the editor with 'queryEditor' name
 
         editor.tokenTooltip = new TokenTooltip(editor);
         editor.save = function () {
             if (SiddhiEditor.debug) {
-                console.warn(loggerContext+":"+"save"+"->");
+                console.warn(loggerContext + ":" + "save" + "->");
                 console.log("Saved");
             }
 
         };
+
         //Setting the editor options ...
-        editor.session.setMode("ace/mode/siddhi");   //language mode located at ace_editor/mode-siddhi.js
-        editor.setTheme("ace/theme/crimson_editor"); //theme located at ace_editor/theme/crimson_editor.js
+        editor.setReadOnly(readOnly);
+        editor.session.setMode(ACE_CONSTANT.SIDDHI_MODE);   //language mode located at ace_editor/mode-siddhi.js
+        editor.setTheme(ACE_CONSTANT.THEME); //theme located at ace_editor/theme/crimson_editor.js
         editor.getSession().setUseWrapMode(true);
         editor.getSession().setTabSize(4);
         editor.getSession().setUseSoftTabs(true);
@@ -77,11 +89,11 @@
         editor.setDisplayIndentGuides(true);
         editor.setShowPrintMargin(false);
         editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true,
+            enableBasicAutocompletion: !readOnly && autoCompletion,
+            enableSnippets: !readOnly && autoCompletion,
             enableLiveAutocompletion: false,
-            autoScrollEditorIntoView:true,
-            enableMultiselect:true
+            autoScrollEditorIntoView: true,
+            enableMultiselect: true
         });
 
         //State variables for error checking and highlighting
@@ -92,11 +104,16 @@
         SiddhiEditor.myVar = 0;  //To store the id in SetTimeout()
 
         //Adding Siddhi specific autocompleter
-        langTools.addCompleter(completionEngine.SiddhiCompleter);
-        loadMetaData("siddhi-extensions.json","extensions");
-        loadMetaData("siddhi-inbuilt.json","system");
+        if (!readOnly && autoCompletion) {
+            langTools.addCompleter(completionEngine.SiddhiCompleter);
+            loadMetaData(ACE_CONSTANT.EXTENSION, "extensions");
+            loadMetaData(ACE_CONSTANT.INBUILT, "system");
+
+        }
+
         //Attaching editor's onChange event handler
-        editor.getSession().on('change',editorChangeHandler);
+        editor.getSession().on('change', editorChangeHandler);
+
     };
 
 
@@ -104,7 +121,7 @@
      * @name : editorChangeHandler
      * @param e : Event object
      */
-    var editorChangeHandler=function (e) {
+    var editorChangeHandler = function (e) {
         completionEngine.streamList.clear();  //clear the exiting streams
         var position = editor.getCursorPosition();
         if (e.data.text == "\n") {
@@ -119,7 +136,7 @@
         if (e.data.action == "removeLines") {
             //if current line is deleted , update the line numbers of errors
 
-            for ( index = 0; index < SiddhiEditor.semanticErrorList.length; index++) {
+            for (index = 0; index < SiddhiEditor.semanticErrorList.length; index++) {
                 if (SiddhiEditor.semanticErrorList[index].row > position.row || ( SiddhiEditor.semanticErrorList[index].row == position.row && position.column == 0)) {
                     SiddhiEditor.semanticErrorList[index].row--;
                 }
@@ -139,15 +156,15 @@
         var expression = editor.getValue().trim(); //input text
         var txt = new antlr4.InputStream(expression);   //input stream
         var lexer = new SiddhiQLGrammarLexer.SiddhiQLLexer(txt);  // generating lexer
-        lexer._listeners = [ ];
+        lexer._listeners = [];
         lexer._listeners.push(AceErrorListener.INSTANCE);
         var tokens = new antlr4.CommonTokenStream(lexer);  //generated a token stream
         var parser = new SiddhiQLGrammarParser.SiddhiQLParser(tokens);  //using the token stream , generate the parser
-        parser._listeners = [ ];
+        parser._listeners = [];
         parser._listeners.push(AceErrorListener.INSTANCE);
         parser.buildParseTrees = true;
 
-        var  tree = parser.parse();
+        var tree = parser.parse();
         // parser() is the root level grammar rule. This line generates a parser tree.
         //when generating the new parserTree , the ErrorListener( client_side_Siddhi_parser/antlr4/error/ErrorListener.js -> ConsoleErrorListener.syntaxError()) will be invoked automatically.
         //within that method , the syntax errors are stored in  SiddhiEditor.syntaxErrorList
@@ -157,7 +174,7 @@
 
         //To maintains the line numbers against the distinct query statements(streamDefinitions,query,functionDefinitions..).
         //statementList is important when checking semantic errors.
-        //The input execution plan is submitted to the server statement by statement for semantic error checking
+        //The input execution plan is submitted to the server statement by statement for semantic error checking.
         SiddhiEditor.statementsList = [];
 
         var parserListener = new CustomSiddhiListener.CustomSiddhiListener();
@@ -165,9 +182,11 @@
         //default walker will traverse through the parserTree and generate events . Those events are listen by the parserListener and update the statementsList with line numbers.
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(parserListener, tree);
 
-        if (parser._syntaxErrors == 0 && (SiddhiEditor.previousParserTree != tree.toStringTree(tree, parser))) {
-           //if there are no syntax errors and there is a change in parserTree => check for semantic errors if there is no change in the query within 3sec period
-           //3 seconds delay is added to avoid repeated server calls while user is typing the query.
+        if (SiddhiEditor.realTimeValidation && !SiddhiEditor.readOnly && parser._syntaxErrors == 0
+            && (SiddhiEditor.previousParserTree != tree.toStringTree(tree, parser))) {
+            //if there are no syntax errors and there is a change in parserTree => check for semantic errors if there is no change in the query within 3sec period
+            //3 seconds delay is added to avoid repeated server calls while user is typing the query.
+
             clearInterval(SiddhiEditor.myVar); //clear the previous interval ID
 
             SiddhiEditor.myVar = setInterval(function () { //execute semanticCheck() after 3 seconds
@@ -184,12 +203,12 @@
      * This method send server calls to check the semantic errors
      */
     var semanticCheck = function () {
-        foundErrors=false;
+        foundErrors = false;
 
         if (Date.now() - SiddhiEditor.lastEdit >= 3000) {
             //if the user has not typed anything after 3 seconds from his last change , then send the query for semantic check
             //check whether the query contains errors or not
-            var isValid = submitForSemanticErrors( editor.getValue(), true);
+            var isValid = submitForSemanticErrors(editor.getValue(), true);
 
             if (!isValid) {
                 //if the query contains semantic  errors. send the query in a constructive manner to sever to get the line number with error
@@ -198,7 +217,7 @@
                 for (var i = 0; i < SiddhiEditor.statementsList.length; i++) {
                     query += SiddhiEditor.statementsList[i].state + "  \n";
                     submitForSemanticErrors(query, false, SiddhiEditor.statementsList[i].line, SiddhiEditor.statementsList[i].state);
-                    if(foundErrors)
+                    if (foundErrors)
                         break;
                 }
             }
@@ -214,7 +233,7 @@
      * @param array2
      * @returns {Array.<T>|string|*}
      */
-    var combine=function(array1,array2){
+    var combine = function (array1, array2) {
         return array1.concat(array2);
     };
 
@@ -243,18 +262,18 @@
      * @param checkingQuery {string}: currently checking query statement
      * @returns {boolean} : query is valid or not
      */
-    var submitForSemanticErrors=function(executionPlan,errorCheck,line,checkingQuery) {
+    var submitForSemanticErrors = function (executionPlan, errorCheck, line, checkingQuery) {
         if (executionPlan == "") {
             console.log("Query expressions cannot be empty.");
             return;
         }
 
-        var path ="../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp";
-        if(errorCheck) {
-            var responseText =jQuery.ajax({
+        var path = "../eventprocessor/validate_siddhi_queries_ajaxprocessor.jsp";
+        if (errorCheck) {
+            var responseText = jQuery.ajax({
                     type: "POST",
                     url: path,
-                    async:false,
+                    async: false,
                     data: {executionPlan: executionPlan}
 
                 }
@@ -267,14 +286,14 @@
 
                 SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
                 return true;
-            }else
+            } else
                 return false;
 
-        }else{
+        } else {
             jQuery.ajax({
                     type: "POST",
                     url: path,
-                    async:true,
+                    async: true,
                     data: {executionPlan: executionPlan},
                     success: function (resultText) {
                         resultText = resultText.trim();
@@ -295,7 +314,7 @@
                             });
 
                             //update the state of the foundError.=> stop sending another server call
-                            foundErrors=true;
+                            foundErrors = true;
 
                             //show the errors
                             SiddhiEditor.editor.session.setAnnotations(combine(SiddhiEditor.semanticErrorList, SiddhiEditor.syntaxErrorList));
@@ -308,15 +327,12 @@
 
     }
 
-    function loadMetaData(jsonFile,property){
-        jQuery.getJSON( "../eventprocessor/js/"+jsonFile+"?callback=checkJson", function( data ) {
+    var loadMetaData = function (jsonFile, property) {
+        jQuery.getJSON("../eventprocessor/js/" + jsonFile, function (data) {
 
-            completionEngine[property]=data;
+            completionEngine[property] = data;
         });
     }
 
-
-
 }());
-
 
