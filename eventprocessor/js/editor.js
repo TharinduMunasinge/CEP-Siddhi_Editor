@@ -23,7 +23,7 @@
     // Adding SiddhiEditor namespace
     var SiddhiEditor = window.SiddhiEditor || {};
     window.SiddhiEditor = SiddhiEditor;
-
+    var loggerContext="SiddhiEditor";
 
     //Antlr4 JS runtime integration code segment goes here..
     var antlr4 = require('../eventprocessor/js/client_side_Siddhi_parser/antlr4/index');       //Antlr4 JS runtime
@@ -43,7 +43,7 @@
     SiddhiEditor.Range = Range;
     SiddhiEditor.langTools=langTools;
     SiddhiEditor.combine=combine;
-    SiddhiEditor.debug=false;
+    SiddhiEditor.debug=true;
 
 
     /**
@@ -58,8 +58,11 @@
 
         editor.tokenTooltip = new TokenTooltip(editor);
         editor.save = function () {
-            if(SiddhiEditor.debug)
-            console.log("Saved");
+            if (SiddhiEditor.debug) {
+                console.warn(loggerContext+":"+"save"+"->");
+                console.log("Saved");
+            }
+
         };
         //Setting the editor options ...
         editor.session.setMode("ace/mode/siddhi");   //language mode located at ace_editor/mode-siddhi.js

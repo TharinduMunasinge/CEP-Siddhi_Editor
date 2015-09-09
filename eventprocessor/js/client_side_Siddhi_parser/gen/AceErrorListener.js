@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 var ErrorListener=require("../antlr4/error/ErrorListener").ErrorListener;
+var loggerContext="AceErrorListener"
 function AceErrorListener() {
     ErrorListener.call(this);
     return this;
@@ -44,9 +45,11 @@ AceErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol, l
 
 
     SiddhiEditor.syntaxErrorList.push({row:line-1 ,column: column, text:msg,type:"error"});
+    if (SiddhiEditor.debug) {
+        console.warn(loggerContext+":"+"syntaxError"+"->");
+        console.error("  Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
+    }
 
-    if(SiddhiEditor.debug)
-    console.error("  Error line " + line + ":" + column + " " + msg," recognizer:",recognizer," offendingSymbol:",offendingSymbol," e:",e);
 };
 
 exports.AceErrorListener = AceErrorListener;

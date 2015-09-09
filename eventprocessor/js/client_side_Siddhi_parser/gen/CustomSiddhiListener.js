@@ -15,6 +15,7 @@
  */
 
 var SiddhiQLGrammarListener = require('./SiddhiQLListener').SiddhiQLListener;
+var loggerContext="CustomSiddhiListener";
 CustomSiddhiListener = function() {
     SiddhiQLGrammarListener.call(this); // inherit default listener
     return this;
@@ -27,8 +28,12 @@ CustomSiddhiListener.prototype.constructor = CustomSiddhiListener;
 
 CustomSiddhiListener.prototype.exitDefinition_function = function(ctx) {
 
-    if(SiddhiEditor.debug)
+    if (SiddhiEditor.debug) {
+        console.warn(loggerContext+":"+"exitDefinition_function"+"->");
         console.log("EXIT Function",ctx);
+    }
+
+
 
     updateTable(ctx," ;")
 };
@@ -55,8 +60,11 @@ CustomSiddhiListener.prototype.exitDefinition_table = function(ctx) {
 
 function updateTable(ctx,seperator){
     SiddhiEditor.statementsList.push({state:ctx.start.getInputStream().getText(ctx.start.start,ctx.stop.stop)+seperator,line:ctx.start.line});
-   if(SiddhiEditor.debug)
-    console.log(SiddhiEditor.statementsList)
+
+    if (SiddhiEditor.debug) {
+        console.warn(loggerContext+":"+"updateTable"+"->");
+        console.log("StatementList",SiddhiEditor.statementsList);
+    }
 }
 
 CustomSiddhiListener.prototype.exitError = function(ctx) {
@@ -115,8 +123,13 @@ CustomSiddhiListener.prototype.exitQuery = function(ctx) {
             if(ctx.query_input().standard_stream()) {
                 var inputStream = ctx.query_input().standard_stream().source().stream_id().name().stop.text;
                 tempStream.attributeNames = window.completionEngine.streamList.getAttributeList(inputStream);
-                if(SiddhiEditor.debug)
-                console.log("inferred stream", tempStream.attributeNames)
+
+                if (SiddhiEditor.debug) {
+                    console.warn(loggerContext+":"+"exitQuery"+"->");
+                    console.log("inferred stream", tempStream.attributeNames)
+                }
+
+
             }else if(ctx.query_input().join_stream())
             {
                 var leftsource=ctx.query_input().join_stream().left_source.source().stop.text;
@@ -132,8 +145,12 @@ CustomSiddhiListener.prototype.exitQuery = function(ctx) {
                     return rightsource+"_"+d;
                 });
                 tempStream.attributeNames= leftStreamAttributeList.concat(rightStreamAttributeList);
-                if(SiddhiEditor.debug)
-                  console.log("JOIN STREAM",tempStream);
+                if (SiddhiEditor.debug) {
+                    console.warn(loggerContext+":"+"exitQuery"+"->");
+                      console.log("JOIN STREAM",tempStream);
+                }
+
+
             }
         }
         for( i=0;i<attributeList.length;i++)
