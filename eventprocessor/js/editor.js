@@ -26,16 +26,16 @@
     var loggerContext="SiddhiEditor";
 
     //Antlr4 JS runtime integration code segment goes here..
-    var antlr4 = require('../eventprocessor/js/client_side_Siddhi_parser/antlr4/index');       //Antlr4 JS runtime
-    var SiddhiQLGrammarLexer = require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLLexer');
-    var SiddhiQLGrammarParser = require('../eventprocessor/js/client_side_Siddhi_parser/gen/SiddhiQLParser');
-    var CustomSiddhiListener = require('../eventprocessor/js/client_side_Siddhi_parser/gen/CustomSiddhiListener');                       //custom listener for Siddhi
-    var AceErrorListener=require("../eventprocessor/js/client_side_Siddhi_parser/gen/AceErrorListener").AceErrorListener;
+    var antlr4 = require(ANTLR_CONSTANT.ROOT+ANTLR_CONSTANT.INDEX);       //Antlr4 JS runtime
+    var SiddhiQLGrammarLexer = require(ANTLR_CONSTANT.ROOT+ANTLR_CONSTANT.SIDDHI_LEXER);
+    var SiddhiQLGrammarParser = require(ANTLR_CONSTANT.ROOT+ANTLR_CONSTANT.SIDDHI_PARSER);
+    var CustomSiddhiListener = require(ANTLR_CONSTANT.ROOT+ANTLR_CONSTANT.SIDDHI_LISTENER);                       //custom listener for Siddhi
+    var AceErrorListener=require(ANTLR_CONSTANT.ROOT+ANTLR_CONSTANT.ERROR_LISTENER).AceErrorListener;
 
     //Adding Additional ACE editor modules
-    var langTools = ace.require("ace/ext/language_tools");  //Required for auto completion
-    var TokenTooltip = require("js/ace_editor/token-tooltip").TokenTooltip;   //Required for token tooltips
-    var Range = ace.require("ace/range").Range ;        //Required for extracting part of the query
+    var langTools = ace.require(ACE_CONSTANT.LANG_TOOL);  //Required for auto completion
+    var TokenTooltip = require(ACE_CONSTANT.TOKEN_TOOLTIP).TokenTooltip;   //Required for token tooltips
+    var Range = ace.require(ACE_CONSTANT.ACE_RANGE).Range ;        //Required for extracting part of the query
     var editor;
     var foundErrors=false;
 
@@ -43,7 +43,7 @@
     SiddhiEditor.Range = Range;
     SiddhiEditor.langTools=langTools;
     SiddhiEditor.combine=combine;
-    SiddhiEditor.debug=true;
+    SiddhiEditor.debug=false;
 
 
     /**
@@ -51,8 +51,15 @@
      * @augments : Configuration object
      * @description : This method contains the initialization code of for Siddhi Editor
      */
-    SiddhiEditor.init = function () {
-        editor= ace.edit("editor");  //Setting the DivID of the Editor .. Could be <pre> or <div> tags
+    SiddhiEditor.init = function (config) {
+
+        var realtimeValidation=config.realTimeValidation;
+        var divID=config.divID;
+        var autoCompletion=config.autoCompletion;
+        var readOnly=config.readOnly;
+        SiddhiEditor.realTimeValidation=realtimeValidation;
+
+        editor= ace.edit(divID);  //Setting the DivID of the Editor .. Could be <pre> or <div> tags
         SiddhiEditor.editor=editor;   //Saving editor instance in SiddhiEditor namespace for later use
         window.queryEditor = SiddhiEditor.editor; //Saving editor instance in Window namespace . Since other existing JS code refer the editor with 'queryEditor' name
 
@@ -64,9 +71,10 @@
             }
 
         };
+        editor.setReadOnly(readOnly);
         //Setting the editor options ...
-        editor.session.setMode("ace/mode/siddhi");   //language mode located at ace_editor/mode-siddhi.js
-        editor.setTheme("ace/theme/crimson_editor"); //theme located at ace_editor/theme/crimson_editor.js
+        editor.session.setMode(ACE_CONSTANT.SIDDHI_MODE);   //language mode located at ace_editor/mode-siddhi.js
+        editor.setTheme(ACE_CONSTANT.THEME); //theme located at ace_editor/theme/crimson_editor.js
         editor.getSession().setUseWrapMode(true);
         editor.getSession().setTabSize(4);
         editor.getSession().setUseSoftTabs(true);
@@ -77,8 +85,8 @@
         editor.setDisplayIndentGuides(true);
         editor.setShowPrintMargin(false);
         editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true,
+            enableBasicAutocompletion: !readOnly && autoCompletion,
+            enableSnippets: !readOnly && autoCompletion,
             enableLiveAutocompletion: false,
             autoScrollEditorIntoView:true,
             enableMultiselect:true
@@ -92,10 +100,16 @@
         SiddhiEditor.myVar = 0;  //To store the id in SetTimeout()
 
         //Adding Siddhi specific autocompleter
-        langTools.addCompleter(completionEngine.SiddhiCompleter);
+        if(!readOnly && autoCompletion) {
+            langTools.addCompleter(completionEngine.SiddhiCompleter);
+            loadMetaData(ACE_CONSTANT.EXTENSION, "extensions");
+            loadMetaData(ACE_CONSTANT.INBUILT, "system");
 
-        //Attaching editor's onChange event handler
-        editor.getSession().on('change',editorChangeHandler);
+        }//Attaching editor's onChange event handler
+
+
+            editor.getSession().on('change', editorChangeHandler);
+
     };
 
 
@@ -164,9 +178,11 @@
         //default walker will traverse through the parserTree and generate events . Those events are listen by the parserListener and update the statementsList with line numbers.
         antlr4.tree.ParseTreeWalker.DEFAULT.walk(parserListener, tree);
 
-        if (parser._syntaxErrors == 0 && (SiddhiEditor.previousParserTree != tree.toStringTree(tree, parser))) {
+        if (parser._syntaxErrors == 0 &&
+            SiddhiEditor.realTimeValidation  &&(SiddhiEditor.previousParserTree != tree.toStringTree(tree, parser))) {
            //if there are no syntax errors and there is a change in parserTree => check for semantic errors if there is no change in the query within 3sec period
            //3 seconds delay is added to avoid repeated server calls while user is typing the query.
+
             clearInterval(SiddhiEditor.myVar); //clear the previous interval ID
 
             SiddhiEditor.myVar = setInterval(function () { //execute semanticCheck() after 3 seconds
@@ -307,7 +323,12 @@
 
     }
 
+    var loadMetaData =function (jsonFile,property){
+        jQuery.getJSON( "../eventprocessor/js/"+jsonFile, function( data ) {
 
+            completionEngine[property]=data;
+        });
+    }
 
 }());
 

@@ -44,6 +44,7 @@ AceErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol, l
 
 
 
+    if(SiddhiEditor.realTimeValidation)
     SiddhiEditor.syntaxErrorList.push({row:line-1 ,column: column, text:msg,type:"error"});
     if (SiddhiEditor.debug) {
         console.warn(loggerContext+":"+"syntaxError"+"->");
