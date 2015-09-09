@@ -164,8 +164,8 @@ DefaultErrorStrategy.prototype.reportError = function(recognizer, e) {
     } else if ( e instanceof FailedPredicateException ) {
         this.reportFailedPredicate(recognizer, e);
     } else {
-        //console.log("unknown recognition error type: " + e.constructor.name);
-        //console.log(e.stack);
+        console.log("unknown recognition error type: " + e.constructor.name);
+        console.log(e.stack);
         recognizer.notifyErrorListeners(e.getOffendingToken(), e.getMessage(), e);
     }
 };
@@ -566,7 +566,7 @@ DefaultErrorStrategy.prototype.getMissingSymbol = function(recognizer) {
 };
 
 DefaultErrorStrategy.prototype.getExpectedTokens = function(recognizer) {
-    //console.log("Expected Tokens",(recognizer.getExpectedTokens()).toString(recognizer.literalNames, recognizer.symbolicNames));
+  //  console.log("Expected Tokens",(recognizer.getExpectedTokens()).toString(recognizer.literalNames, recognizer.symbolicNames));
     return recognizer.getExpectedTokens();
 };
 
